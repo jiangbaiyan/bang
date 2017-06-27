@@ -11,8 +11,8 @@
 |
 */
 Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],function (){
-    Route::post('getCode','RegisterController@getCode');
-    Route::post('verify','RegisterController@verify');
+    Route::get('getCode','RegisterController@getCode');
+    Route::get('verify','RegisterController@verify');
     Route::post('register','RegisterController@register');
-    Route::post('login','LoginController@login');
+    Route::get('login','LoginController@login');
 });

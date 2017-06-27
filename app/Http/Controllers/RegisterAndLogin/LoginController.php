@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     public function login(Request $request){
-        $phone = $request->input('phone');
-        $password = $request->input('password');
+        $phone = $request->header('phone');
+        $password = $request->header('password');
         if (!$phone||!$password){
             return Response::json(['status' => 400,'msg' => 'need phone or password']);
         }

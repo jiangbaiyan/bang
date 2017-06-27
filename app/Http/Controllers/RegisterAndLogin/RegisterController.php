@@ -19,7 +19,7 @@ class RegisterController extends Controller
 
     //获取短信验证码
     public function getCode(Request $request){
-        $phone = $request->input('phone');
+        $phone = $request->header('phone');
         if (!$phone){
             return Response::json(['status' => 400,'msg' => 'need phone']);
         }
@@ -28,7 +28,7 @@ class RegisterController extends Controller
         }
         $phoneFromDataBase = User::where('phone',$phone)->first();
         if ($phoneFromDataBase){
-            return Response::json(['status' => 403,'msg' => 'phone has existed']);
+            return Response::json(['status' => 404,'msg' => 'phone has existed']);
         }
         $num = rand(100000,999999);
         $smsParams = [
@@ -49,8 +49,8 @@ class RegisterController extends Controller
 
     //验证逻辑
     public function verify(Request $request){
-        $phone = $request->input('phone');
-        $userCode = $request->input('code');
+        $phone = $request->header('phone');
+        $userCode = $request->header('code');
         if (!$phone){
             return Response::json(['status' => 400,'msg' => 'need phone']);
         }

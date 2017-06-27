@@ -34,9 +34,9 @@ class RegisterController extends Controller
         $smsParams = [
             'code'    => "$num"
         ];
-        $name = '帮帮吧';
+        $name = '帮帮吧App';
         $content = $content = json_encode($smsParams);
-        $code = 'SMS_57925111';
+        $code = 'SMS_73870009';
         $result = $this->sms->send($phone,$name,$content,$code);
         if(property_exists($result,'result')){
             Cache::put($phone,$num,1);//验证码60秒过期

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\RegisterAndLogin;
 
+use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
@@ -29,4 +30,5 @@ class LoginController extends Controller
         Redis::expire($phone,100000);
         return Response::json(["status"=>200,"msg"=>"login successfully",'data' => ['phone' => $phone,'token' => $token]]);
     }
+
 }

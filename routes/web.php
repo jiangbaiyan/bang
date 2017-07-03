@@ -16,3 +16,13 @@ Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],
     Route::post('register','RegisterController@register');
     Route::get('login','LoginController@login');
 });
+
+Route::group(['prefix' => 'order','namespace' => 'Order'],function (){
+    Route::group(['middleware' => 'CheckLogin'],function (){
+        Route::get('getOrders','IndexController@getOrders');
+        Route::get('finishService','IndexController@finishService');
+        Route::post('comment','IndexController@comment');
+        Route::get('showDetail','DetailController@showDetail');
+        Route::delete('cancelOrder','DetailController@cancelOrder');
+    });
+});

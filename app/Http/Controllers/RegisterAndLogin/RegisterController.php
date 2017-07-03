@@ -55,7 +55,7 @@ class RegisterController extends Controller
             return Response::json(['status' => 400,'msg' => 'need phone']);
         }
         $code = Cache::get($phone);
-        if (!$code){
+        if ($code==null){
             return Response::json(['status' => 402,'msg' => 'the code is overdue']);
         }
         if (strcmp($userCode,$code)){

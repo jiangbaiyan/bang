@@ -10,17 +10,17 @@ use Illuminate\Support\Facades\Response;
 
 class IndexController extends Controller
 {
-    public function getOrders(Request $request){//获取所有订单
+    public function getOrders(Request $request){
         $phone = $request->header('phone');
         $user = User::where('phone',$phone)->first();
         if (!$user){
             return Response::json(['status' => 404,'msg' => 'user not exists']);
         }
-        $orders = $user->orders;
+        $orders = Order::where('applicant',$phone)->orWhere('servant',$phone)->get();
         return Response::json(['status' => 200,'msg' => 'orders required successfully','data' => $orders]);
     }
 
-    public function finishService(Request $request){//对发单者适用
+    public function finishService(Request $request){
         $id = $request->header('id');
         if (!$id){
             return Response::json(['status' => 400,'msg' => 'need id']);
@@ -29,17 +29,22 @@ class IndexController extends Controller
         if (!$order){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
+        if ($order->state != 1){
+            return Response::json(['status' => 402,'msg' => 'wrong state, the service is not running']);
+        }
         $order->state = 2;
         $order->save();
-        $users = $order->users;
-        foreach ($users as $user){
+        $applicantUser = $order->applicant;
+        $servantUser = $order->servant;
+        $users = User::where('phone',$applicantUser)->orWhere('phone',$servantUser)->get();
+            foreach ($users as $user){
             $user->credit +=5;
             $user->save();
         }
         return Response::json(['status' => 200,'msg' => 'finish service successfully']);
     }
 
-    public function comment(Request $request){//对发单者和接单者适用
+    public function comment(Request $request){
         $star = $request->input('star');
         $id = $request->input('id');
         if (!$star||!$id){

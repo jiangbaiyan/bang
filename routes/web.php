@@ -18,11 +18,11 @@ Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],
 });
 
 Route::group(['prefix' => 'order','namespace' => 'Order'],function (){
-    Route::group(['middleware' => 'CheckLogin'],function (){
+    //Route::group(['middleware' => 'CheckLogin'],function (){
         Route::get('getOrders','IndexController@getOrders');
         Route::get('finishService','IndexController@finishService');
         Route::post('comment','IndexController@comment');
         Route::get('showDetail','DetailController@showDetail');
         Route::delete('cancelOrder','DetailController@cancelOrder');
-    });
+    //});
 });

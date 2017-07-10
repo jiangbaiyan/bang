@@ -16,7 +16,7 @@ class IndexController extends Controller
         if (!$user){
             return Response::json(['status' => 404,'msg' => 'user not exists']);
         }
-        $orders = Order::where('applicant',$phone)->orWhere('servant',$phone)->get();
+        $orders = Order::where('applicant',$phone)->orWhere('servant',$phone)->orderBy('updated_at','desc')->get();
         return Response::json(['status' => 200,'msg' => 'orders required successfully','data' => $orders]);
     }
 

@@ -29,10 +29,10 @@ class IndexController extends Controller
         if (!$order){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
-        if ($order->state != 1){
+        if ($order->state != 2){
             return Response::json(['status' => 402,'msg' => 'wrong state, the service is not running']);
         }
-        $order->state = 2;
+        $order->state = 3;
         $order->save();
         $applicantUser = $order->applicant;
         $servantUser = $order->servant;
@@ -57,12 +57,14 @@ class IndexController extends Controller
         $servant = $order->servant;
         $userServant = User::where('phone',$servant)->first();
         if (!$userServant){
-            return Response::json(['status' => 404,'msg' => 'user not exists']);
+            return Response::json(['status' => 404,'msg' => 'servant not exists']);
         }
         $userServant->credit += $star;
         if (!$userServant->save()){
             return Response::json(['status' => 402,'msg' => 'comment failed']);
         }
+        $order->state = 4;
+        $order->save();
         return Response::json(['status' => 200,'msg' => 'comment successfully']);
     }
 }

@@ -20,8 +20,13 @@ class DetailController extends Controller
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
         $applicantName = User::where('phone',$order->applicant)->first()->name;
-        $servantName = User::where('phone',$order->servant)->first()->name;
-        return Response::json(['status' => 200,'msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $applicantName,'servant_name' => $servantName]]);
+        if ($order->servant == ''){
+            return Response::json(['status' => 200,'msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $applicantName,'servant_name' => '暂无接单者']]);
+        }
+        else{
+            $servantName = User::where('phone',$order->servant)->first()->name;
+            return Response::json(['status' => 200,'msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $applicantName,'servant_name' => $servantName]]);
+        }
     }
 
     public function cancelOrder(Request $request){

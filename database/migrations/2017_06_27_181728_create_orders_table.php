@@ -16,8 +16,8 @@ class CreateOrdersTable extends Migration
         Schema::create('orders',function (Blueprint $table){
             $table->increments('id');
             $table->string('title',20)->default('');
-            $table->tinyInteger('category')->comment('0-跑腿,1-悬赏提问,2-学习辅导,3-技术服务,4-生活服务,5-其他')->default(0);
-            $table->tinyInteger('state')->cpmment('0-等待接单,1-正在服务,2-服务完成');
+            $table->tinyInteger('category')->comment('1-跑腿,2-悬赏提问,3-学习辅导,4-技术服务,5-生活服务,6-其他');
+            $table->tinyInteger('state')->cpmment('1-等待接单,2-正在服务,3-服务完成,4-评价完成')->default(1);
             $table->text('content');
             $table->dateTime('close_time');
             $table->decimal('money');

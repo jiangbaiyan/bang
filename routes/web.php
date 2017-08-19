@@ -11,12 +11,13 @@
 |
 */
 
-
 Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],function (){
     Route::get('getCode','RegisterController@getCode');
     Route::get('verify','RegisterController@verify');
     Route::post('register','RegisterController@register');
+    Route::post('qqRegister','RegisterController@qqRegister');
     Route::get('login','LoginController@login');
+    Route::post('qqLogin','LoginController@qqLogin');
 });
 
 //Route::group(['middleware' => 'CheckLogin'],function (){
@@ -42,5 +43,6 @@ Route::group(['prefix' => 'helpOthers','namespace' => 'HelpOthers'],function(){
     Route::get('getOtherOrders','IndexController@getOtherOrders');
     Route::get('showDetail','DetailController@getDetail');
     Route::post('report','ReportController@submitReport');
+    Route::post('receiveOrder','DetailController@receiveOrder');
 });
 //});

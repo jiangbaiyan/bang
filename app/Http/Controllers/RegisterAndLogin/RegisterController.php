@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
 use iscms\Alisms\SendsmsPusher as Sms;
 
@@ -34,7 +35,7 @@ class RegisterController extends Controller
         $smsParams = [
             'code'    => "$num"
         ];
-        $name = '帮帮吧App';
+        $name = '帮帮吧';
         $content = $content = json_encode($smsParams);
         $code = 'SMS_73870009';
         $result = $this->sms->send($phone,$name,$content,$code);
@@ -79,5 +80,23 @@ class RegisterController extends Controller
         else{
             return Response::json(['status' => 402,'msg' => 'user created failed']);
         }
+    }
+
+    public function qqRegister(Request $request){
+        $phone = $request->input('phone');
+        $openid = $request->input('openid');
+        if (!$phone||!$openid){
+            return Response::json(['status' => 400,'msg' => 'need phone or openid']);
+        }
+        $user = User::where('openid','=',$openid)->first();
+        if (!$user){
+            return Response::json(['status' => 200,'msg' => 'user not exists']);
+        }
+        $user->phone = $phone;
+        $user->save();
+        $token = Hash::make($phone.date(DATE_W3C));
+        Redis::set($phone,$token);
+        Redis::expire($phone,100000);
+        return Response::json(['status' => 200,'msg' => 'qqRegister successfully','data' => $user,'token' => $token]);
     }
 }

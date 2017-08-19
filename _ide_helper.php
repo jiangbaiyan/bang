@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.4.27 on 2017-06-25.
+ * Generated for Laravel 5.4.31 on 2017-08-12.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -3594,7 +3594,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the PDO connection.
          *
-         * @param \PDO|null $pdo
+         * @param \PDO|\Closure|null $pdo
          * @return $this 
          * @static 
          */ 
@@ -3607,7 +3607,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the PDO connection used for reading.
          *
-         * @param \PDO|null $pdo
+         * @param \PDO|\Closure|null $pdo
          * @return $this 
          * @static 
          */ 
@@ -6327,6 +6327,35 @@ namespace Illuminate\Support\Facades {
          
     }
 
+    class Redis {
+        
+        /**
+         * Get a Redis connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @static 
+         */ 
+        public static function connection($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::connection($name);
+        }
+        
+        /**
+         * Resolve the given connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function resolve($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::resolve($name);
+        }
+         
+    }
+
     class Request {
         
         /**
@@ -6521,7 +6550,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Returns the client IP address.
+         * Get the client IP address.
          *
          * @return string 
          * @static 
@@ -6532,7 +6561,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Returns the client IP addresses.
+         * Get the client IP addresses.
          *
          * @return array 
          * @static 
@@ -6540,6 +6569,17 @@ namespace Illuminate\Support\Facades {
         public static function ips()
         {
             return \Illuminate\Http\Request::ips();
+        }
+        
+        /**
+         * Get the client user agent.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function userAgent()
+        {
+            return \Illuminate\Http\Request::userAgent();
         }
         
         /**
@@ -10236,6 +10276,19 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Get a temporary URL for the file at the given path.
+         *
+         * @param string $path
+         * @param \DateTimeInterface $expiration
+         * @return string 
+         * @static 
+         */ 
+        public static function temporaryUrl($path, $expiration)
+        {
+            return \Illuminate\Filesystem\FilesystemAdapter::temporaryUrl($path, $expiration);
+        }
+        
+        /**
          * Get an array of all files in a directory.
          *
          * @param string|null $directory
@@ -11946,7 +11999,7 @@ namespace  {
              * Save a new model and return the instance.
              *
              * @param array $attributes
-             * @return \Illuminate\Database\Eloquent\Model 
+             * @return \Illuminate\Database\Eloquent\Model|$this 
              * @static 
              */ 
             public static function create($attributes = array())
@@ -11958,7 +12011,7 @@ namespace  {
              * Save a new model and return the instance. Allow mass-assignment.
              *
              * @param array $attributes
-             * @return \Illuminate\Database\Eloquent\Model 
+             * @return \Illuminate\Database\Eloquent\Model|$this 
              * @static 
              */ 
             public static function forceCreate($attributes)
@@ -12147,7 +12200,7 @@ namespace  {
              * Execute the query and get the first result.
              *
              * @param array $columns
-             * @return mixed 
+             * @return \Illuminate\Database\Eloquent\Model|static|null 
              * @static 
              */ 
             public static function first($columns = array())
@@ -12167,6 +12220,20 @@ namespace  {
             public static function when($value, $callback, $default = null)
             {    
                 return \Illuminate\Database\Eloquent\Builder::when($value, $callback, $default);
+            }
+         
+            /**
+             * Apply the callback's query changes if the given "value" is false.
+             *
+             * @param mixed $value
+             * @param callable $callback
+             * @param callable $default
+             * @return mixed 
+             * @static 
+             */ 
+            public static function unless($value, $callback, $default = null)
+            {    
+                return \Illuminate\Database\Eloquent\Builder::unless($value, $callback, $default);
             }
          
             /**
@@ -12534,7 +12601,7 @@ namespace  {
              * Add a raw or where clause to the query.
              *
              * @param string $sql
-             * @param array $bindings
+             * @param mixed $bindings
              * @return \Illuminate\Database\Query\Builder|static 
              * @static 
              */ 
@@ -13585,6 +13652,8 @@ namespace  {
     class Queue extends \Illuminate\Support\Facades\Queue {}
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
+
+    class Redis extends \Illuminate\Support\Facades\Redis {}
 
     class Request extends \Illuminate\Support\Facades\Request {}
 

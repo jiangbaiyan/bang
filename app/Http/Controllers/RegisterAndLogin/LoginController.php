@@ -30,4 +30,20 @@ class LoginController extends Controller
         return Response::json(["status"=>200,"msg"=>"login successfully",'data' => ['phone' => $phone,'token' => $token]]);
     }
 
+    public  function qqLogin(Request $request){
+        $openid = $request->input('openid');
+        $name = $request->input('name');
+        if (!$openid){
+            return Response::json(['status' => 400,'msg' => 'need openid']);
+        }
+        $user = User::where('openid','=',$openid)->first();
+        if (!$user){
+            User::create(['openid' => $openid,'name' => $name]);
+            return Response::json(['status' =>200,'msg' => 'firstQQLogin successfully']);
+        }
+        $token = Hash::make($user->phone.date(DATE_W3C));
+        Redis::set($user->phone,$token);
+        Redis::expire($user->phone,100000);
+        return Response::json(['status' =>200,'msg' => 'qqLogin successfully','phone' => $user->phone,'token' => $token]);
+    }
 }

@@ -23,11 +23,12 @@ class DetailController extends Controller
         if (!$user){
             return Response::json(['status' => 404,'msg' => 'applicant not exists']);
         }
-        return Response::json(['status' => 200,',msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $user->name,'applicant_credit' => $user->credit,'applicant_sex' => $user->sex]]);
+        return Response::json(['status' => 200,',msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $user->name,'applicant_phone' => $user->phone, 'applicant_credit' => $user->credit,'applicant_sex' => $user->sex]]);
     }
 
     public function receiveOrder(Request $request){
         $id = $request->input('id');
+        $phone = $request->input('phone');
         if (!$id){
             return Response::json(['status' => 400,'msg' => 'need id']);
         }
@@ -39,6 +40,7 @@ class DetailController extends Controller
             return Response::json(['status' => 402,'msg' => 'the order is not waiting for receiving']);
         }
         $order->state = 2;
+        $order->servant = $phone;
         $order->save();
         return Response::json(['status' => 200,'msg' => 'receive order successfully']);
     }

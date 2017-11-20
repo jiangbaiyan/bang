@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>帮帮吧网约服务平台</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -52,7 +52,7 @@
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 600;
                 letter-spacing: .1rem;
                 text-decoration: none;
@@ -79,15 +79,18 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    您看到的是“帮帮吧”网约服务平台API根目录
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="#">登录注册模块</a>
+                    <a href="#">我来帮模块</a>
+                    <a href="#">求支援模块</a>
+                    <a href="#">订单模块</a>
+                    <a href="#">个人中心模块</a>
+                    <a href="#">支付模块</a>
+                    <a href="#">好友系统</a>
+                    <a href="#">聊天模块</a>
                 </div>
             </div>
         </div>

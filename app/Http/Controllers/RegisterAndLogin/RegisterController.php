@@ -19,14 +19,7 @@ class RegisterController extends Controller
     }
 
     //获取短信验证码
-    public function getCode(Request $request){
-        $phone = $request->header('phone');
-        if (!$phone){
-            return Response::json(['status' => 400,'msg' => 'need phone']);
-        }
-        if (strlen($phone)>11){
-            return Response::json(['status' => 402,'msg' => 'wrong phone format']);
-        }
+    public function getCode($phone){
         $phoneFromDataBase = User::where('phone',$phone)->first();
         if ($phoneFromDataBase){
             return Response::json(['status' => 404,'msg' => 'phone has existed']);
@@ -48,12 +41,14 @@ class RegisterController extends Controller
         }
     }
 
-    //验证逻辑
-    public function verify(Request $request){
-        $phone = $request->header('phone');
-        $userCode = $request->header('code');
-        if (!$phone){
-            return Response::json(['status' => 400,'msg' => 'need phone']);
+
+    //验证短信验证码的正确性并注册
+    public function register(Request $request){
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+/*        $userCode = $request->input('code');
+        if (!$phone||!$password||!$userCode){
+            return Response::json(['status' => 400,'msg' => 'need phone or password or code']);
         }
         $code = Cache::get($phone);
         if ($code==null){
@@ -61,25 +56,22 @@ class RegisterController extends Controller
         }
         if (strcmp($userCode,$code)){
             return Response::json(['status' => 404,'msg' => 'wrong code']);
-        }
-        return Response::json(['status' => 200,'msg' => 'phone verified successfully']);
+        }*/
+        User::create(['phone' => $phone,'password' => Hash::make($password)]);
+        return Response::json(['status' => 200,'msg' => 'user created successfully']);
+
     }
 
-    //最终注册按钮逻辑
-    public function register(Request $request){
+    public function saveName(Request $request){
         $phone = $request->input('phone');
-        $password = $request->input('password');
         $name = $request->input('name');
-        $id_number = $request->input('id_number');
-        if (!$phone||!$password||!$id_number||!$name){
-            return Response::json(['status' => 400,'msg' => 'need phone or password or name or id_number']);
+        if (!$phone||!$name){
+            return Response::json(['status' => 400,'msg' => 'need phone or name']);
         }
-        if (User::create(['phone' => $phone,'password' => Hash::make($password),'name' => $name,'id_number' => $id_number])){
-            return Response::json(['status' => 200,'msg' => 'user created successfully']);
-        }
-        else{
-            return Response::json(['status' => 402,'msg' => 'user created failed']);
-        }
+        $user = User::where('phone','=',$phone)->first();
+        $user->name = $name;
+        $user->save();
+        return Response::json(['status' => 200,'msg' => 'name saved successfully']);
     }
 
     public function qqRegister(Request $request){

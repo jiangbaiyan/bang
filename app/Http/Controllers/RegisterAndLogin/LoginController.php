@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     public function login(Request $request){
-        $phone = $request->header('phone');
-        $password = $request->header('password');
+        $phone = $request->input('phone');
+        $password = $request->input('password');
         if (!$phone||!$password){
             return Response::json(['status' => 400,'msg' => 'need phone or password']);
         }
@@ -26,7 +26,7 @@ class LoginController extends Controller
         }
         $token = Hash::make($phone.$password.date(DATE_W3C));
         Redis::set($phone,$token);
-        Redis::expire($phone,100000);
+        Redis::expire($phone,604800);
         return Response::json(["status"=>200,"msg"=>"login successfully",'data' => ['phone' => $phone,'token' => $token]]);
     }
 

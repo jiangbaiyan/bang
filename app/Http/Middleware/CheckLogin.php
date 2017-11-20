@@ -17,8 +17,14 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
-        $phone = $request->input('phone')||$request->header('phone');
-        $token = $request->input('token')||$request->header('token');
+        if ($request->isMethod('GET')){
+            $phone = $request->header('phone');
+            $token = $request->header('token');
+        }
+        else{
+            $phone = $request->input('phone');
+            $token = $request->input('token');
+        }
         if (!$phone||!$token){
             return response()->json(['status' => '400','msg' => 'need phone or token']);
         }

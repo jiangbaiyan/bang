@@ -1,50 +1,37 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+//好友系统
 Route::post('create','IMController@create');
 Route::put('update','IMController@update');
+
 //登录注册模块
 Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],function (){
-    Route::get('code/{phone}','RegisterController@getCode');
+    Route::get('code','RegisterController@getCode');
     Route::post('register','RegisterController@register');
     Route::post('name','RegisterController@saveName');
-    Route::post('qqRegister','RegisterController@qqRegister');
     Route::post('login','LoginController@login');
+    Route::post('qqRegister','RegisterController@qqRegister');
     Route::post('qqLogin','LoginController@qqLogin');
 });
 
 Route::group(['middleware' => 'CheckLogin'],function (){
+    //订单模块（与用户相关）
     Route::group(['prefix' => 'order','namespace' => 'Order'],function (){
-        Route::get('getOrders','IndexController@getOrders');
-        Route::get('finishService','IndexController@finishService');
-        Route::post('comment','IndexController@comment');
-        Route::get('showDetail','DetailController@showDetail');
-        Route::delete('cancelOrder','DetailController@cancelOrder');
+        Route::get('order','IndexController@getOrders');
+        Route::get('detail','DetailController@getDetail');
+        Route::put('finish','IndexController@finishService');
+        Route::put('comment','IndexController@comment');
+        Route::delete('order','DetailController@cancelOrder');
     });
 
+    //求支援模块
     Route::group(['prefix' => 'askForHelp','namespace' => 'AskForHelp'],function(){
-        Route::post('createOrder','AskForHelpController@createOrder');
+        Route::post('order','AskForHelpController@createOrder');
     });
 
+    //我来帮模块
     Route::group(['prefix' => 'helpOthers','namespace' => 'HelpOthers'],function(){
-        Route::get('getAllOrders','IndexController@getAllOrders');
-        Route::get('getRunOrders','IndexController@getRunOrders');
-        Route::get('getAskOrders','IndexController@getAskOrders');
-        Route::get('getLearnOrders','IndexController@getLearnOrders');
-        Route::get('getTechniqueOrders','IndexController@getTechniqueOrders');
-        Route::get('getLifeOrders','IndexController@getLifeOrders');
-        Route::get('getOtherOrders','IndexController@getOtherOrders');
-        Route::get('showDetail','DetailController@getDetail');
-        Route::post('report','ReportController@submitReport');
-        Route::post('receiveOrder','DetailController@receiveOrder');
+        Route::get('order','IndexController@getOrder');
+        Route::get('detail','DetailController@getDetail');
+        Route::put('receive','DetailController@receiveOrder');
     });
 });

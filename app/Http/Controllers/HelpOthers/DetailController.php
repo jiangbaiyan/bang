@@ -10,38 +10,42 @@ use Illuminate\Support\Facades\Response;
 
 class DetailController extends Controller
 {
+    //获取订单详情（等待接单的订单）
     public function getDetail(Request $request){
-        $id = $request->header('id');
-        if (!$id){
-            return Response::json(['status' => 400,'msg' => 'need id']);
+        $orderid = $request->header('orderid');
+        if (!isset($orderid)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        $order = Order::find($id);
+        $order = Order::find($orderid);
         if (!$order){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
-        $user = User::where('phone',$order->applicant)->first();
-        if (!$user){
-            return Response::json(['status' => 404,'msg' => 'applicant not exists']);
-        }
-        return Response::json(['status' => 200,',msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $user->name,'applicant_phone' => $user->phone, 'applicant_credit' => $user->credit,'applicant_sex' => $user->sex]]);
+        $data = $order->join('users','orders.applicant_id','=','users.id')
+            ->select('orders.*','users.phone','users.name','users.sex','users.credit','users.head')
+            ->get();
+        return Response::json(['status' => 200,'msg' => 'success','data' => $data]);
     }
 
+    //接单
     public function receiveOrder(Request $request){
-        $id = $request->input('id');
-        $phone = $request->input('phone');
-        if (!$id){
-            return Response::json(['status' => 400,'msg' => 'need id']);
+        $userid = $request->input('id');
+        $orderid = $request->input('orderid');
+        if (!isset($orderid)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        $order = Order::find($id);
+        $order = Order::find($orderid);
         if (!$order){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
         if($order->state!=1){
             return Response::json(['status' => 402,'msg' => 'the order is not waiting for receiving']);
         }
+        if ($order->applicant_id == $userid){
+            return Response::json(['status' => 403,'msg' => 'cannot receive your own order']);
+        }
         $order->state = 2;
-        $order->servant = $phone;
+        $order->servant_id = $userid;
         $order->save();
-        return Response::json(['status' => 200,'msg' => 'receive order successfully']);
+        return Response::json(['status' => 200,'msg' => 'success']);
     }
 }

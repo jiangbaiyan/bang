@@ -18,21 +18,21 @@ class CheckLogin
     public function handle($request, Closure $next)
     {
         if ($request->isMethod('GET')){
-            $phone = $request->header('phone');
+            $id = $request->header('id');
             $token = $request->header('token');
         }
         else{
-            $phone = $request->input('phone');
+            $id = $request->input('id');
             $token = $request->input('token');
         }
-        if (!$phone||!$token){
-            return response()->json(['status' => '400','msg' => 'need phone or token']);
+        if (!isset($id)||!isset($token)){
+            return response()->json(['status' => '400','msg' => 'missing parameters']);
         }
-        $token_exists = Redis::exists($phone);
+        $token_exists = Redis::exists($id);
         if(!$token_exists){
             return Response::json(["status"=>404,"msg"=>"token not exists"]);
         }
-        $redisToken = Redis::get($phone);
+        $redisToken = Redis::get($id);
         if(strcmp($redisToken,$token)!=0){
             return Response::json(["status"=>402,"msg"=>"wrong login token"]);
         }

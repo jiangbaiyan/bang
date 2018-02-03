@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+    //登录
     public function login(Request $request){
         $phone = $request->input('phone');
         $password = $request->input('password');
-        if (!$phone||!$password){
-            return Response::json(['status' => 400,'msg' => 'need phone or password']);
+        if (!isset($phone)||!isset($password)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
         $user = User::where('phone',$phone)->first();
         if (!$user){
@@ -25,12 +26,12 @@ class LoginController extends Controller
             return Response::json(['status' => 402,'msg' => 'wrong password']);
         }
         $token = Hash::make($phone.$password.date(DATE_W3C));
-        Redis::set($phone,$token);
-        Redis::expire($phone,604800);
-        return Response::json(["status"=>200,"msg"=>"login successfully",'data' => ['phone' => $phone,'token' => $token]]);
+        Redis::set($user->id,$token);
+        Redis::expire($user->id,604800);
+        return Response::json(["status"=>200,"msg"=>"success",'data' => ['user' => $user,'token' => $token]]);
     }
 
-    public  function qqLogin(Request $request){
+/*    public  function qqLogin(Request $request){
         $openid = $request->input('openid');
         $name = $request->input('name');
         if (!$openid){
@@ -44,6 +45,6 @@ class LoginController extends Controller
         $token = Hash::make($user->phone.date(DATE_W3C));
         Redis::set($user->phone,$token);
         Redis::expire($user->phone,100000);
-        return Response::json(['status' =>200,'msg' => 'qqLogin successfully','phone' => $user->phone,'token' => $token]);
-    }
+        return Response::json(['status' =>200,'msg' => 'qqLogin successfully','user' => $user,'token' => $token]);
+    }*/
 }

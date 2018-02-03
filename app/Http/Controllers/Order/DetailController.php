@@ -10,33 +10,33 @@ use Illuminate\Support\Facades\Response;
 
 class DetailController extends Controller
 {
-    public function showDetail(Request $request){
-        $id = $request->header('id');
-        if (!$id){
-            return Response::json(['status' => 400,'msg' => 'need id']);
+    //查看与用户相关的订单详情（此时用户既可以是发单者也可以是接单者）
+    public function getDetail(Request $request){
+        $orderid = $request->header('orderid');
+        if (!isset($orderid)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        $order = Order::find($id);
+        $order = Order::find($orderid);
         if (!$order){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
-        $applicantName = User::where('phone',$order->applicant)->first()->name;
-        if ($order->servant == ''){
+        $applicantName = User::find($order->applicant_id)->name;
+        if ($order->servant_id == null){//如果现在没有人接单
             return Response::json(['status' => 200,'msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $applicantName,'servant_name' => '暂无接单者']]);
         }
-        else{
-            $servantName = User::where('phone',$order->servant)->first()->name;
+        else{//有人接单
+            $servantName = User::find($order->servant_id)->name;
             return Response::json(['status' => 200,'msg' => 'order required successfully','data1' => $order,'data2' => ['applicant_name' => $applicantName,'servant_name' => $servantName]]);
         }
     }
 
+    //取消订单
     public function cancelOrder(Request $request){
-        $id = $request->input('id');
-        if (!$id){
-            return Response::json(['status' => 400,'msg' => 'need id']);
+        $orderid = $request->input('orderid');
+        if (!isset($orderid)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        if (!Order::destroy($id)){
-            return Response::json(['status' => 402,'msg' => 'order deleted failed']);
-        }
-        return Response::json(['status' => 200,'msg' => 'order deleted successfully']);
+        Order::destroy($orderid);
+        return Response::json(['status' => 200,'msg' => 'success']);
     }
 }

@@ -9,36 +9,23 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
-use iscms\Alisms\SendsmsPusher as Sms;
 
 class RegisterController extends Controller
 {
-    public function __construct(Sms $sms)
-    {
-        $this->sms=$sms;
-    }
-
     //获取短信验证码
-    public function getCode($phone){
-        $phoneFromDataBase = User::where('phone',$phone)->first();
-        if ($phoneFromDataBase){
-            return Response::json(['status' => 404,'msg' => 'phone has existed']);
+    public function getCode(Request $request){
+        $phone = $request->header('phone');
+        if (!isset($phone)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        $num = rand(100000,999999);
-        $smsParams = [
-            'code'    => "$num"
-        ];
-        $name = '帮帮吧';
-        $content = $content = json_encode($smsParams);
-        $code = 'SMS_73870009';
-        $result = $this->sms->send($phone,$name,$content,$code);
-        if(property_exists($result,'result')){
-            Cache::put($phone,$num,1);//验证码60秒过期
-            return Response::json(['status' => 200,'msg' => 'send sms successfully']);
+        if (!preg_match('^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$',$phone)){
+            return Response::json(['status' => 403,'msg' => 'wrong phone format']);
         }
-        else{
-            return Response::json(['status' => 402,'msg' => 'send sms failed']);
+        $user = User::where('phone',$phone)->first();
+        if ($user->count()){
+            return Response::json(['status' => 401,'msg' => 'phone was registered']);
         }
+        return Response::json(['status' => 200,'msg' => 'success']);
     }
 
 
@@ -48,7 +35,7 @@ class RegisterController extends Controller
         $password = $request->input('password');
 /*        $userCode = $request->input('code');
         if (!$phone||!$password||!$userCode){
-            return Response::json(['status' => 400,'msg' => 'need phone or password or code']);
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
         $code = Cache::get($phone);
         if ($code==null){
@@ -58,23 +45,24 @@ class RegisterController extends Controller
             return Response::json(['status' => 404,'msg' => 'wrong code']);
         }*/
         User::create(['phone' => $phone,'password' => Hash::make($password)]);
-        return Response::json(['status' => 200,'msg' => 'user created successfully']);
+        return Response::json(['status' => 200,'msg' => 'success']);
 
     }
 
+    //用户输入昵称并保存
     public function saveName(Request $request){
         $phone = $request->input('phone');
         $name = $request->input('name');
-        if (!$phone||!$name){
-            return Response::json(['status' => 400,'msg' => 'need phone or name']);
+        if (!isset($phone)||!isset($name)){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
         $user = User::where('phone','=',$phone)->first();
         $user->name = $name;
         $user->save();
-        return Response::json(['status' => 200,'msg' => 'name saved successfully']);
+        return Response::json(['status' => 200,'msg' => 'success']);
     }
 
-    public function qqRegister(Request $request){
+/*    public function qqRegister(Request $request){
         $phone = $request->input('phone');
         $openid = $request->input('openid');
         if (!$phone||!$openid){
@@ -90,5 +78,5 @@ class RegisterController extends Controller
         Redis::set($phone,$token);
         Redis::expire($phone,100000);
         return Response::json(['status' => 200,'msg' => 'qqRegister successfully','data' => $user,'token' => $token]);
-    }
+    }*/
 }

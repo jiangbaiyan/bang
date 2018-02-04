@@ -31,6 +31,26 @@ class LoginController extends Controller
         return Response::json(["status"=>200,"msg"=>"success",'data' => ['user' => $user,'token' => $token]]);
     }
 
+    public function uploadHead(Request $request){
+        $id = $request->input('id');
+        if (!$request->hasFile('head')){
+            return Response::json(['status' => 400,'msg' => 'missing parameters']);
+        }
+        $user = User::find($id);
+        $url = 'https://cloudfiles.cloudshm.com/';//又拍云存储地址
+        $file = $request->file('head');
+        $allowedFormat = ['png','bmp','jpg','jpeg'];
+        $ext = $file->getClientOriginalExtension();//获取扩展名
+        if (!in_array($ext,$allowedFormat)){//判断格式是否是允许上传的格式
+            return response()->json(['status' => 402,'msg' => 'wrong file format']);
+        }
+        $path = \Storage::disk('upyun')->putFileAs('Bang/head',$file,"$id".'_'.time(),'public');
+        $url = $url.$path;
+        $user->head = $url;
+        $user->save();
+        return Response::json(['status' => 200,'msg' => 'success']);
+    }
+
 /*    public  function qqLogin(Request $request){
         $openid = $request->input('openid');
         $name = $request->input('name');

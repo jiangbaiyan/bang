@@ -9,6 +9,7 @@ Route::group(['prefix' => 'registerAndLogin','namespace' => 'RegisterAndLogin'],
     Route::post('register','RegisterController@register');
     Route::post('name','RegisterController@saveName');
     Route::post('login','LoginController@login');
+    Route::post('upload','LoginController@uploadHead');
     Route::post('qqRegister','RegisterController@qqRegister');
     Route::post('qqLogin','LoginController@qqLogin');
 });

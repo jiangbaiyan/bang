@@ -20,8 +20,21 @@ class AskForHelpController extends Controller
         if (!isset($id)||!isset($title)||!isset($content)||!isset($category)||!isset($endTime)||!isset($money)){
             return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        Order::create(['title' => $title,'content' => $content,'category' => $category,'state' => 1,'end_time' => $endTime,'money' => $money,'applicant_id' => $id]);
+        $order = Order::create(['title' => $title,'content' => $content,'category' => $category,'state' => 1,'end_time' => $endTime,'money' => $money,'applicant_id' => $id]);
+        $url = 'https://cloudfiles.cloudshm.com/';//又拍云存储地址
+        $allowedFormat = ['png','bmp','jpg','jpeg'];
+        if ($request->hasFile('img')){
+            $img = $request->file('img');
+            $ext = $img->getClientOriginalExtension();//获取扩展名
+            $name = $img->getClientOriginalName();
+            if (!in_array($ext,$allowedFormat)){//判断格式是否是允许上传的格式
+                return response()->json(['status' => 402,'msg' => 'wrong file format']);
+            }
+            $path = \Storage::disk('upyun')->putFileAs("Bang/order/$id",$img,"$order->id".'_'.time().'_'.$name,'public');
+            $url = $url.$path;
+            $order->image = $url;
+            $order->save();
+        }
         return Response::json(['status' => 200,'msg' => 'success']);
     }
-
 }

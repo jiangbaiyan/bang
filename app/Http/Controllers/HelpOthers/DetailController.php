@@ -16,13 +16,12 @@ class DetailController extends Controller
         if (!isset($orderid)){
             return Response::json(['status' => 400,'msg' => 'missing parameters']);
         }
-        $order = Order::find($orderid);
-        if (!$order){
+        $data = Order::join('users','orders.applicant_id','=','users.id')
+            ->select('orders.*','users.phone','users.name','users.sex','users.credit','users.head')
+            ->find($orderid);
+        if (!$data){
             return Response::json(['status' => 404,'msg' => 'order not exists']);
         }
-        $data = $order->join('users','orders.applicant_id','=','users.id')
-            ->select('orders.*','users.phone','users.name','users.sex','users.credit','users.head')
-            ->get();
         return Response::json(['status' => 200,'msg' => 'success','data' => $data]);
     }
 

@@ -33,6 +33,10 @@ class RegisterController extends Controller
     public function register(Request $request){
         $phone = $request->input('phone');
         $password = $request->input('password');
+        $user = User::where('phone',$phone)->first();
+        if ($user->count()){
+            return Response::json(['status' => 401,'msg' => 'phone was registered']);
+        }
 /*        $userCode = $request->input('code');
         if (!$phone||!$password||!$userCode){
             return Response::json(['status' => 400,'msg' => 'missing parameters']);

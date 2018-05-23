@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="{{ config('app.locale') }}">
+<html lang="{{ app()->getLocale() }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>帮帮吧网约服务平台</title>
+        <title>Laravel</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -52,7 +52,7 @@
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
-                font-size: 14px;
+                font-size: 12px;
                 font-weight: 600;
                 letter-spacing: .1rem;
                 text-decoration: none;
@@ -68,29 +68,26 @@
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
-                    @if (Auth::check())
+                    @auth
                         <a href="{{ url('/home') }}">Home</a>
                     @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
+                        <a href="{{ route('login') }}">Login</a>
+                        <a href="{{ route('register') }}">Register</a>
+                    @endauth
                 </div>
             @endif
 
             <div class="content">
                 <div class="title m-b-md">
-                    您看到的是“帮帮吧”网约服务平台API根目录
+                    Laravel
                 </div>
 
                 <div class="links">
-                    <a href="#">登录注册模块</a>
-                    <a href="#">我来帮模块</a>
-                    <a href="#">求支援模块</a>
-                    <a href="#">订单模块</a>
-                    <a href="#">个人中心模块</a>
-                    <a href="#">支付模块</a>
-                    <a href="#">好友系统</a>
-                    <a href="#">聊天模块</a>
+                    <a href="https://laravel.com/docs">Documentation</a>
+                    <a href="https://laracasts.com">Laracasts</a>
+                    <a href="https://laravel-news.com">News</a>
+                    <a href="https://forge.laravel.com">Forge</a>
+                    <a href="https://github.com/laravel/laravel">GitHub</a>
                 </div>
             </div>
         </div>

@@ -6,7 +6,7 @@
  * Time: 22:34
  */
 
-namespace app\Helper;
+namespace App\Helper;
 
 class ConstHelper{
 

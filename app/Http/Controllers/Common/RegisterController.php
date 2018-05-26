@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers\Common;
 
-use app\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
 use App\UserModel;
@@ -17,9 +16,8 @@ use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
-use src\Exceptions\ResourceNotFoundException;
 
-class LoginRegController extends Controller{
+class RegisterController extends Controller{
 
 
     /**
@@ -31,7 +29,7 @@ class LoginRegController extends Controller{
      */
     public function getCode(Request $request){
         $req = $request->all();
-        $validator = Validator::make($req,['phone' => 'required|unique:users']);
+        $validator = Validator::make($req,['phone' => 'required']);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }
@@ -70,40 +68,5 @@ class LoginRegController extends Controller{
             throw new OperateFailedException();
         }
         return ApiResponse::responseSuccess();
-    }
-
-
-    /**
-     * 使用手机号和密码登录
-     * @param Request $request
-     * @return string
-     * @throws OperateFailedException
-     * @throws ParamValidateFailedException
-     * @throws ResourceNotFoundException
-     */
-    public function loginByPassword(Request $request){
-        $req = $request->all();
-        $validator = Validator::make($req,[
-            'phone' => 'required',
-            'password' => 'required'
-        ]);
-        if ($validator->fails()){
-            throw new ParamValidateFailedException($validator);
-        }
-        $phone = $req['phone'];
-        $password = $req['password'];
-        $userModel = new UserModel();
-        $user = $userModel->where('phone',$phone)->first();
-        if (!$user){
-            throw new ResourceNotFoundException(ConstHelper::USER);
-        }
-        if (!$token = \Auth::attempt(['phone' => $phone,'password' => $password])){
-            throw new OperateFailedException(ConstHelper::WRONG_PASSWORD);
-        }
-        return ApiResponse::responseSuccess(['jwtToken' => $token]);
-    }
-
-    public function loginByCode(){
-
     }
 }

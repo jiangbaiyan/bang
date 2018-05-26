@@ -12,16 +12,17 @@
             "source": {
                 "type": "git",
                 "url": "https://gitee.com/jiangbaiyan/helper.git",
-                "reference": "df80a665bd44538d546ae0b47ad03d518e11ac25"
+                "reference": "7c5709ce37c1d1a7145b0a69517f7a5c81f1bcc3"
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3",
+                "laravel/framework": "5.6.*",
                 "php": ">=7.0.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "helper": "src"
+                "psr-4": {
+                    "src\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -44,7 +45,7 @@
                 "request",
                 "response"
             ],
-            "time": "2018-05-23T12:25:48+00:00"
+            "time": "2018-05-25T15:32:06+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",

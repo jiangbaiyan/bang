@@ -15,5 +15,6 @@ class ConstHelper{
         WRONG_PASSWORD = '密码错误',
         WRONG_CODE = '验证码错误',
         SMS_ERROR = '短信官方接口异常,请稍后重试',
-        CODE = '后台短信验证码不存在';
+        CODE = '后台短信验证码不存在',
+        WRONG_ID_CARD = '身份证号码不正确';
 }

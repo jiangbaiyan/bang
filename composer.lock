@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f7ecf40bbb2ff8deed1fe8559de86b0",
+    "content-hash": "5c4bd4f99d27dfcf5df284016e481845",
     "packages": [
         {
             "name": "baiyan/helper",
@@ -1422,6 +1422,64 @@
                 "php"
             ],
             "time": "2018-03-25T17:35:16+00:00"
+        },
+        {
+            "name": "ofcold/identity-card",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ofcold/identity-card.git",
+                "reference": "23dc322a619b2ab311d03f37324434f0f54b87df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://files.phpcomposer.com/files/ofcold/identity-card/23dc322a619b2ab311d03f37324434f0f54b87df.zip",
+                "reference": "23dc322a619b2ab311d03f37324434f0f54b87df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^7.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ofcold\\IdentityCard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ofcold Team",
+                    "email": "support@ofcold.com",
+                    "homepage": "https://ofcold.com"
+                },
+                {
+                    "name": "Bill Li",
+                    "email": "bill@ofcold.com",
+                    "homepage": "https://artisanbill.com"
+                },
+                {
+                    "name": "Olivia Fu",
+                    "email": "olivia@ofcold.com",
+                    "homepage": "https://olivia.ink"
+                }
+            ],
+            "description": "A simple proof of identity card of the people's Republic of China.",
+            "homepage": "https://ofcold.com",
+            "keywords": [
+                "ID Card",
+                "area",
+                "php71",
+                "region"
+            ],
+            "time": "2018-05-26T06:30:20+00:00"
         },
         {
             "name": "paragonie/random_compat",

@@ -9,6 +9,9 @@ Route::group(['prefix' => 'v1'],function (){
          //注册
          Route::post('register','Common\RegisterController@registerAndVerify');
 
+         //添加身份证号信息
+         Route::post('addIdInfo','Common\RegisterController@addIdInfo');
+
          //手机号密码登录
          Route::post('loginByPassword','Common\LoginController@loginByPassword');
 

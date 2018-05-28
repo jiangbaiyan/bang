@@ -11,6 +11,7 @@ use App\Helper\ConstHelper;
 use Flc\Dysms\Client;
 use Flc\Dysms\Request\SendSms;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ResourceNotFoundException;
 
@@ -49,7 +50,7 @@ class SmsService{
             \Log::error($res['Message']);
             throw new OperateFailedException(ConstHelper::SMS_ERROR);
         }
-        Cache::put($phone.'Code',$code,3);
+        Session::put('code',$code);
     }
 
     /**
@@ -59,8 +60,8 @@ class SmsService{
      * @throws OperateFailedException
      * @throws ResourceNotFoundException
      */
-    public static function verifyCode($phone,$frontCode){
-        $backCode = Cache::get($phone.'Code');
+    public static function verifyCode($frontCode){
+        $backCode = Session::get('code');
         if (!$backCode){
             throw new ResourceNotFoundException(ConstHelper::CODE);
         }

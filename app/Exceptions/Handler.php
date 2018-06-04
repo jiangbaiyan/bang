@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use src\ApiHelper\ApiResponse;
+use src\Exceptions\UnAuthorizedException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,10 +45,13 @@ class Handler extends ExceptionHandler
      * @param \Illuminate\Http\Request $request
      * @param Exception $exception
      * @return string|\Symfony\Component\HttpFoundation\Response
+     * @throws UnAuthorizedException
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request,$exception);
+        if ($exception->getMessage() == 'Unauthenticated.'){
+            throw new UnAuthorizedException();
+        }
         return ApiResponse::response($exception->getCode(),$exception->getMessage());
     }
 }

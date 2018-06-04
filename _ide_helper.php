@@ -306,7 +306,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Detect the application's current environment.
+         * Detect the application'HelpOthers current environment.
          *
          * @param \Closure $callback
          * @return string 
@@ -477,7 +477,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Boot the application's service providers.
+         * Boot the application'HelpOthers service providers.
          *
          * @return void 
          * @static 
@@ -659,7 +659,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the application's deferred services.
+         * Get the application'HelpOthers deferred services.
          *
          * @return array 
          * @static 
@@ -670,7 +670,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Set the application's deferred services.
+         * Set the application'HelpOthers deferred services.
          *
          * @param array $services
          * @return void 
@@ -682,7 +682,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Add an array of services to the application's deferred services.
+         * Add an array of services to the application'HelpOthers deferred services.
          *
          * @param array $services
          * @return void 
@@ -1027,7 +1027,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Bind a new callback to an abstract's rebind event.
+         * Bind a new callback to an abstract'HelpOthers rebind event.
          *
          * @param string $abstract
          * @param \Closure $callback
@@ -1169,7 +1169,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the container's bindings.
+         * Get the container'HelpOthers bindings.
          *
          * @return array 
          * @static 
@@ -1657,7 +1657,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Validate a user's credentials.
+         * Validate a user'HelpOthers credentials.
          *
          * @param array $credentials
          * @return bool 
@@ -2792,7 +2792,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Wipes clean the entire cache's keys.
+         * Wipes clean the entire cache'HelpOthers keys.
          *
          * @return bool True on success and false on failure.
          * @static 
@@ -3745,7 +3745,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Log a query in the connection's query log.
+         * Log a query in the connection'HelpOthers query log.
          *
          * @param string $query
          * @param array $bindings
@@ -4735,7 +4735,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the file's last modification time.
+         * Get the file'HelpOthers last modification time.
          *
          * @param string $path
          * @return int 
@@ -5968,7 +5968,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Queue a new e-mail message for sending on the given queue.
          * 
-         * This method didn't match rest of framework's "onQueue" phrasing. Added "onQueue".
+         * This method didn't match rest of framework'HelpOthers "onQueue" phrasing. Added "onQueue".
          *
          * @param string $queue
          * @param string|array $view
@@ -7033,7 +7033,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Merge new input into the current request's input array.
+         * Merge new input into the current request'HelpOthers input array.
          *
          * @param array $input
          * @return \Illuminate\Http\Request 
@@ -7321,7 +7321,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Creates a new request with values from PHP's super globals.
+         * Creates a new request with values from PHP'HelpOthers super globals.
          *
          * @return static 
          * @static 
@@ -7667,7 +7667,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Gets the request's scheme.
+         * Gets the request'HelpOthers scheme.
          *
          * @return string 
          * @static 
@@ -7734,7 +7734,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Returns the HTTP host being requested.
          * 
-         * The port name will be appended to the host if it's non-standard.
+         * The port name will be appended to the host if it'HelpOthers non-standard.
          *
          * @return string 
          * @static 
@@ -10965,7 +10965,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the file's last modification time.
+         * Get the file'HelpOthers last modification time.
          *
          * @param string $path
          * @return int 
@@ -12308,7 +12308,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Increment the top loop's indices.
+         * Increment the top loop'HelpOthers indices.
          *
          * @return void 
          * @static 
@@ -13247,7 +13247,7 @@ namespace  {
             }
          
             /**
-             * Get a single column's value from the first result of a query.
+             * Get a single column'HelpOthers value from the first result of a query.
              *
              * @param string $column
              * @return mixed 
@@ -13578,7 +13578,7 @@ namespace  {
             }
          
             /**
-             * Apply the callback's query changes if the given "value" is true.
+             * Apply the callback'HelpOthers query changes if the given "value" is true.
              *
              * @param mixed $value
              * @param callable $callback
@@ -13604,7 +13604,7 @@ namespace  {
             }
          
             /**
-             * Apply the callback's query changes if the given "value" is false.
+             * Apply the callback'HelpOthers query changes if the given "value" is false.
              *
              * @param mixed $value
              * @param callable $callback
@@ -14666,7 +14666,7 @@ namespace  {
             }
          
             /**
-             * Put the query's results in random order.
+             * Put the query'HelpOthers results in random order.
              *
              * @param string $seed
              * @return $this 

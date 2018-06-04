@@ -18,4 +18,13 @@ Route::group(['prefix' => 'v1'],function (){
          //手机验证码登录
          Route::post('loginByCode','Common\LoginController@loginByCode');
      });
+
+     Route::group(['middleware' => 'auth:api'],function (){
+         Route::group(['prefix' => 'askForHelp'],function (){
+
+             //发布求支援订单
+             Route::post('releaseOrder','AskForHelp\AskForHelpController@releaseOrder');
+
+         });
+     });
 });

@@ -26,5 +26,21 @@ Route::group(['prefix' => 'v1'],function (){
              Route::post('releaseOrder','AskForHelp\AskForHelpController@releaseOrder');
 
          });
+
+         Route::group(['prefix' => 'helpOthers'],function (){
+
+             //获取所有发布的等待服务的订单（可传递参数选择类型）
+             Route::get('getReleasedOrderList','HelpOthers\HelpOthersController@getReleasedOrdersList');
+
+             //获取发布的订单详情
+             Route::get('getReleasedOrderDetail','HelpOthers\HelpOthersController@getReleasedOrderDetail');
+
+             //接单
+             Route::post('receiveOrder','HelpOthers\HelpOthersController@receiveOrder');
+
+             //完成订单
+             Route::post('finishOrder','HelpOthers\HelpOthersController@finishOrder');
+
+         });
      });
 });

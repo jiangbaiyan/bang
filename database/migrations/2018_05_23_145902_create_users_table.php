@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('name',20)->nullable()->comment('姓名');
             $table->unsignedTinyInteger('age')->nullable()->comment('年龄');
             $table->string('sex',2)->nullable()->comment('性别');
+            $table->integer('point')->nullable()->comment('积分');
             $table->string('province',50)->nullable()->comment('省份');
             $table->string('city',50)->nullable()->comment('城市');
             $table->string('avatar',500)->nullable()->comment('头像url');

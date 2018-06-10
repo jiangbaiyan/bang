@@ -93,7 +93,7 @@ class RegisterController extends Controller{
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }
-        $user = Session::get($req['phone'].'user');
+        $user = \Cache::get($req['phone'].'user');
         if (!isset($user)){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }

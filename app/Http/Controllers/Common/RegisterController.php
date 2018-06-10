@@ -63,7 +63,7 @@ class RegisterController extends Controller{
         $phone = $req['phone'];
         $frontCode = $req['code'];
         $password = $req['password'];
-        SmsService::verifyCode($frontCode);
+        SmsService::verifyCode($phone,$frontCode);
         $user = UserModel::create([
             'phone' => $phone,
             'password' => \Hash::make($password),
@@ -71,7 +71,7 @@ class RegisterController extends Controller{
         if (!$user){
             throw new OperateFailedException();
         }
-        Session::put('user',$user);
+        \Cache::put($phone.'user',$user);
         return ApiResponse::responseSuccess();
     }
 
@@ -86,13 +86,14 @@ class RegisterController extends Controller{
     public function addIdInfo(Request $request){
         $req = $request->all();
         $validator = Validator::make($req,[
+            'phone' => 'required',
             'name' => 'required',
             'idCard' => 'required'
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }
-        $user = Session::get('user');
+        $user = Session::get($req['phone'].'user');
         if (!isset($user)){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }

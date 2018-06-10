@@ -71,7 +71,7 @@ class LoginController extends Controller{
         }
         $phone = $req['phone'];
         $code = $req['code'];
-        SmsService::verifyCode($code);
+        SmsService::verifyCode($phone,$code);
         $userModel = new UserModel();
         $user = $userModel->where('phone',$phone)->first();
         if (!$user){

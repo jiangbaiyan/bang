@@ -49,7 +49,7 @@ class SmsService{
             \Log::error($res['Message']);
             throw new OperateFailedException(ConstHelper::SMS_ERROR);
         }
-        Session::put('code',$code);
+        \Cache::put($phone.'code',$code);
     }
 
     /**
@@ -59,8 +59,8 @@ class SmsService{
      * @throws OperateFailedException
      * @throws ResourceNotFoundException
      */
-    public static function verifyCode($frontCode){
-        $backCode = Session::get('code');
+    public static function verifyCode($phone,$frontCode){
+        $backCode = \Cache::get($phone.'code');
         if (!$backCode){
             throw new ResourceNotFoundException(ConstHelper::CODE);
         }

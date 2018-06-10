@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix' => 'v1','middleware' => ['web']],function (){
+Route::group(['prefix' => 'v1'],function (){
      Route::group(['prefix' => 'common'],function (){
 
          //获取短信验证码

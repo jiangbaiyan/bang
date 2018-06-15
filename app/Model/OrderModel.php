@@ -20,7 +20,8 @@ class OrderModel extends Model
         statusNotReleased = 0,
         statusReleased = 1,
         statusRunning = 2,
-        statusFinished = 3;
+        statusWaitingComment = 3,
+        statusFinished = 4;
 
     /**
      * 订单类别

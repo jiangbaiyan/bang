@@ -48,12 +48,16 @@ class HelpOthersController extends Controller{
         $orderModel = new OrderModel();
         $res = $orderModel
             ->select('id','title','content','begin_time','end_time','price')
-            ->where('status',OrderModel::statusReleased);
+            ->where('status',OrderModel::statusReleased)
+            ->latest();
         if (isset($param)){
             $res = $res->where('type',$param);
         }
-        $data = $res->simplePaginate(10);
-        return ApiResponse::responseSuccess($data);
+        $datas = $res->simplePaginate(10);
+        foreach ($datas as $items){
+            $items->content = str_limit($items->content,100,'...');
+        }
+        return ApiResponse::responseSuccess($datas);
     }
 
     /**
@@ -66,6 +70,7 @@ class HelpOthersController extends Controller{
     public function getReleasedOrderDetail(Request $request){
         $req = $request->all();
         $order = $this->verifyIdAndReturnOrder($req);
+        $order->sender;
         return ApiResponse::responseSuccess($order);
     }
 
@@ -121,7 +126,7 @@ class HelpOthersController extends Controller{
         $receiver = $order->receiver;
         $receiver->point += OrderModel::awardReceiverPoint;
         $receiver->save();
-        $order->status = OrderModel::statusFinished;
+        $order->status = OrderModel::statusWaitingComment;
         if (!$order->save()){
             throw new OperateFailedException();
         }

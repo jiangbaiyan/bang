@@ -48,15 +48,13 @@ class OrderController extends Controller{
             ->select('id','title','status','content','price','updated_at')
             ->latest()
             ->simplePaginate(10);
-        foreach ($datas as $items){
-            $items->content = str_limit($items->content,100,'...');
-        }
         return ApiResponse::responseSuccess($datas);
     }
 
     /**
      * 查看订单详情
      * @param Request $request
+     * @return string
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
      */

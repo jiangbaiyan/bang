@@ -48,6 +48,9 @@ class OrderController extends Controller{
             ->select('id','title','status','content','price','updated_at')
             ->latest()
             ->simplePaginate(10);
+        foreach ($datas as $items){
+            $items->content = str_limit($items->content,100,'...');
+        }
         return ApiResponse::responseSuccess($datas);
     }
 

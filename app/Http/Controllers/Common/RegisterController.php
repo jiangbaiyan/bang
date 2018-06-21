@@ -64,7 +64,7 @@ class RegisterController extends Controller{
         $phone = $req['phone'];
         $frontCode = $req['code'];
         $password = $req['password'];
-        SmsService::verifyCode($phone,$frontCode);
+        SmsService::verifyCode($frontCode);
         $user = UserModel::create([
             'phone' => $phone,
             'password' => \Hash::make($password),
@@ -72,7 +72,7 @@ class RegisterController extends Controller{
         if (!$user){
             throw new OperateFailedException();
         }
-        \Cache::put($phone.'user',$user);
+        \Session::put('user',$user);
         return ApiResponse::responseSuccess();
     }
 
@@ -106,7 +106,7 @@ class RegisterController extends Controller{
             $sex = ConstHelper::UNKNOWN;
         }
         $openid = WxService::getOpenid($req['wxCode']);
-        $user = \Cache::get($req['phone'].'user');
+        $user = \Session::get('user');
         if (!$user){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }

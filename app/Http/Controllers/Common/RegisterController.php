@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Common;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
+use App\Service\WxService;
 use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -83,33 +84,38 @@ class RegisterController extends Controller{
      * @throws ParamValidateFailedException
      * @throws ResourceNotFoundException
      */
-    public function addIdInfo(Request $request){
+    public function addWxInfo(Request $request){
         $req = $request->all();
         $validator = Validator::make($req,[
             'phone' => 'required',
-            'name' => 'required',
-            'idCard' => 'required'
+            'wxCode' => 'required',
+            'nickName' => 'required',
+            'avatarUrl' => 'required',
+            'gender' => 'required',
+            'city' => 'required',
+            'province' => 'required',
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }
+        if ($req['gender'] == 1){
+            $sex = ConstHelper::MALE;
+        } else if ($req['gender'] == 2){
+            $sex = ConstHelper::FEMALE;
+        } else{
+            $sex = ConstHelper::UNKNOWN;
+        }
+        $openid = WxService::getOpenid($req['wxCode']);
         $user = \Cache::get($req['phone'].'user');
-        if (!isset($user)){
+        if (!$user){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }
-        $res = IdentityCard::make($req['idCard']);
-        if ($res === false){
-            throw new OperateFailedException(ConstHelper::WRONG_ID_CARD);
-        }
-        $province = $res->getProvince();
-        $city = $res->getCity();
-        $sex = $res->getGender();
-        $age = $res->getAge();
-        $user->name = $req['name'];
-        $user->province = $province;
-        $user->city = $city;
-        $user->age = $age;
+        $user->openid = $openid;
+        $user->name = $req['nickName'];
+        $user->avatar = $req['avatarUrl'];
         $user->sex = $sex;
+        $user->province = $req['province'];
+        $user->city = $req['city'];
         $user->save();
         return ApiResponse::responseSuccess();
     }

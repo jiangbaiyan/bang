@@ -11,6 +11,10 @@ namespace App\Helper;
 class ConstHelper{
 
     const
+        MALE = '男',
+        FEMALE = '女',
+        UNKNOWN = '未知',
+
         USER = '用户不存在',
         WRONG_PASSWORD = '密码错误',
         WRONG_CODE = '验证码错误',

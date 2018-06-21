@@ -12,7 +12,7 @@ Route::group(['prefix' => 'v1'],function (){
          Route::post('register','Common\RegisterController@registerAndVerify');
 
          //添加身份证号信息
-         Route::post('addIdInfo','Common\RegisterController@addIdInfo');
+         Route::post('addWxInfo','Common\RegisterController@addWxInfo');
 
          //手机号密码登录
          Route::post('loginByPassword','Common\LoginController@loginByPassword');

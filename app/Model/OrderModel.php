@@ -17,22 +17,22 @@ class OrderModel extends Model
      * 订单状态
      */
     const
-        statusNotReleased = 0,
-        statusReleased = 1,
-        statusRunning = 2,
-        statusWaitingComment = 3,
-        statusFinished = 4;
+        statusNotReleased = 0,//草稿(暂时用不到)
+        statusReleased = 1,//已发布
+        statusRunning = 2,//正在服务
+        statusWaitingComment = 3,//服务完成等待评价
+        statusFinished = 4;//评价完成
 
     /**
      * 订单类别
      */
     const
-        typeRunning = 0,
-        typeAsking = 1,
-        typeLearning = 2,
-        typeTechnique = 3,
-        typeDailyLife = 4,
-        typeOthers = 5;
+        typeRunning = 0,//跑腿
+        typeAsking = 1,//悬赏提问
+        typeLearning = 2,//学习辅导
+        typeTechnique = 3,//技术服务
+        typeDailyLife = 4,//生活服务
+        typeOthers = 5;//其他
 
     /**
      * 奖励积分数量

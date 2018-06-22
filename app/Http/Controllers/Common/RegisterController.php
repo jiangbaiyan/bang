@@ -14,9 +14,8 @@ use App\Service\SmsService;
 use App\Service\WxService;
 use App\UserModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
-use Ofcold\IdentityCard\IdentityCard;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
@@ -64,7 +63,7 @@ class RegisterController extends Controller{
         $phone = $req['phone'];
         $frontCode = $req['code'];
         $password = $req['password'];
-        SmsService::verifyCode($frontCode);
+        SmsService::verifyCode($phone,$frontCode);
         $user = UserModel::create([
             'phone' => $phone,
             'password' => \Hash::make($password),
@@ -72,7 +71,7 @@ class RegisterController extends Controller{
         if (!$user){
             throw new OperateFailedException();
         }
-        \Session::put('user',$user);
+        Cache::put('user'.$phone,$user);
         return ApiResponse::responseSuccess();
     }
 
@@ -106,7 +105,7 @@ class RegisterController extends Controller{
             $sex = ConstHelper::UNKNOWN;
         }
         $openid = WxService::getOpenid($req['wxCode']);
-        $user = \Session::get('user');
+        $user = Cache::get('user'.$req['phone']);
         if (!$user){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }

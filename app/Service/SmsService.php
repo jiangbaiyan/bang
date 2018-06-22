@@ -10,6 +10,7 @@ namespace App\Service;
 use App\Helper\ConstHelper;
 use Flc\Dysms\Client;
 use Flc\Dysms\Request\SendSms;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ResourceNotFoundException;
@@ -40,16 +41,15 @@ class SmsService{
         $sendSms->setSignName('帮帮吧');
         $sendSms->setTemplateCode('SMS_126460515');
         $code = rand(1000, 9999);
-        //设置Cache，为验证接口使用
         $sendSms->setTemplateParam(compact('code'));
         $res = $client->execute($sendSms);
         $res = json_decode(json_encode($res),true);
-        //发送失败，抛出异常
         if ($res['Code'] != 'OK'){
             \Log::error($res['Message']);
             throw new OperateFailedException(ConstHelper::SMS_ERROR);
         }
-        \Session::put('code',$code);
+        //设置Cache，为验证接口使用
+        Cache::put('code'.$phone,$code);
     }
 
     /**
@@ -59,8 +59,8 @@ class SmsService{
      * @throws OperateFailedException
      * @throws ResourceNotFoundException
      */
-    public static function verifyCode($frontCode){
-        $backCode = \Session::get('code');
+    public static function verifyCode($phone,$frontCode){
+        $backCode = Cache::get('code'.$phone);
         if (!$backCode){
             throw new ResourceNotFoundException(ConstHelper::CODE);
         }

@@ -64,14 +64,10 @@ class RegisterController extends Controller{
         $frontCode = $req['code'];
         $password = $req['password'];
         SmsService::verifyCode($phone,$frontCode);
-        $user = UserModel::create([
-            'phone' => $phone,
-            'password' => \Hash::make($password),
-        ]);
-        if (!$user){
-            throw new OperateFailedException();
-        }
-        Cache::put('user'.$phone,$user,10);
+        $userData = [];
+        $userData['phone'] = $phone;
+        $userData['password'] = \Hash::make($password);
+        Cache::put('user'.$phone,$userData,10);
         return ApiResponse::responseSuccess();
     }
 
@@ -105,17 +101,20 @@ class RegisterController extends Controller{
             $sex = ConstHelper::UNKNOWN;
         }
         $openid = WxService::getOpenid($req['wxCode']);
-        $user = Cache::get('user'.$req['phone']);
-        if (!$user){
+        $userData = Cache::get('user'.$req['phone']);
+        if (!$userData){
             throw new ResourceNotFoundException(ConstHelper::USER);
         }
-        $user->openid = $openid;
-        $user->name = $req['nickName'];
-        $user->avatar = $req['avatarUrl'];
-        $user->sex = $sex;
-        $user->province = $req['province'];
-        $user->city = $req['city'];
-        $user->save();
+        $userData['openid'] = $openid;
+        $userData['name'] = $req['nickName'];
+        $userData['avatar'] = $req['avatarUrl'];
+        $user['sex'] = $sex;
+        $user['province'] = $req['province'];
+        $user['city'] = $req['city'];
+        $user = UserModel::create($userData);
+        if (!$user){
+            throw new OperateFailedException();
+        }
         return ApiResponse::responseSuccess();
     }
 }

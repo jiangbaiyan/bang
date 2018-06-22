@@ -71,7 +71,7 @@ class RegisterController extends Controller{
         if (!$user){
             throw new OperateFailedException();
         }
-        Cache::put('user'.$phone,$user);
+        Cache::put('user'.$phone,$user,10);
         return ApiResponse::responseSuccess();
     }
 

@@ -49,7 +49,7 @@ class SmsService{
             throw new OperateFailedException(ConstHelper::SMS_ERROR);
         }
         //设置Cache，为验证接口使用
-        Cache::put('code'.$phone,$code);
+        Cache::put('code'.$phone,$code,1);
     }
 
     /**

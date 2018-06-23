@@ -52,7 +52,7 @@ class AskForHelpController extends Controller{
         if (!$orderModel->save()){
             throw new OperateFailedException();
         };
-        return ApiResponse::responseSuccess();
+        return ApiResponse::responseSuccess(['id' => $orderModel->id]);
     }
 
 }

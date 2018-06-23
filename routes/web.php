@@ -23,6 +23,17 @@ Route::group(['prefix' => 'v1'],function (){
 
      Route::group(['middleware' => 'auth:api'],function (){
 
+         Route::group(['prefix' => 'user'],function (){
+
+             //获取个人信息
+             Route::get('getUserInfo','Common\UserController@getUserInfo');
+
+             //更新个人信息
+             Route::post('modifyUserInfo','Common\UserController@modifyUserInfo');
+
+         });
+
+
          //求支援模块
          Route::group(['prefix' => 'askForHelp'],function (){
 

@@ -83,4 +83,5 @@ class LoginController extends Controller{
         }
         return ApiResponse::responseSuccess(['jwtToken' => $token]);
     }
+
 }

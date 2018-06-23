@@ -11,6 +11,9 @@ namespace App\Helper;
 class ConstHelper{
 
     const
+
+        HOST = 'https://bang.cloudshm.com/api/v1',
+
         MALE = '男',
         FEMALE = '女',
         UNKNOWN = '未知',

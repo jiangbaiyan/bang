@@ -64,5 +64,14 @@ Route::group(['prefix' => 'v1'],function (){
              Route::post('commentOrder','Order\OrderController@commentOrder');
 
          });
+
+         Route::group(['prefix' => 'pay'],function (){
+
+             //统一下单
+             Route::get('unifyPay','Pay\WxPayController@unifyPay');
+
+             //支付结果通知
+             Route::get('notify','Pay\WxPayController@notify');
+         });
      });
 });

@@ -14,7 +14,8 @@
         "laravel/tinker": "^1.0",
         "ofcold/identity-card": "^2.0",
         "predis/predis": "^1.1",
-        "tymon/jwt-auth": "1.0.0-rc.2"
+        "tymon/jwt-auth": "1.0.0-rc.2",
+        "yansongda/pay": "^2.3"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

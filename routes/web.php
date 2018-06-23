@@ -40,6 +40,9 @@ Route::group(['prefix' => 'v1'],function (){
              //发布求支援订单
              Route::post('releaseOrder','AskForHelp\AskForHelpController@releaseOrder');
 
+             //删除订单
+             Route::post('deleteOrder','AskForHelp\AskForHelpController@deleteOrder');
+
          });
 
          //我来帮模块

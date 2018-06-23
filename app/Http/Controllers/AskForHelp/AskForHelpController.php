@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\AskForHelp;
 
+use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
 use App\UserModel;
@@ -55,4 +56,28 @@ class AskForHelpController extends Controller{
         return ApiResponse::responseSuccess(['id' => $orderModel->id]);
     }
 
+    /**
+     * 删除(取消)订单
+     * @param Request $request
+     * @return string
+     * @throws OperateFailedException
+     * @throws ParamValidateFailedException
+     * @throws \src\Exceptions\ResourceNotFoundException
+     * @throws \Exception
+     */
+    public function deleteOrder(Request $request){
+        $req = $request->all();
+        $validator = Validator::make($req,['id' => 'required']);
+        if ($validator->fails()){
+            throw new ParamValidateFailedException($validator);
+        }
+        $order = OrderModel::getOrderById($req['id']);
+        if ($order->status != OrderModel::statusReleased){
+            throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
+        }
+        if (!$order->delete()){
+            throw new OperateFailedException();
+        }
+        return ApiResponse::responseSuccess();
+    }
 }

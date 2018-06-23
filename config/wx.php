@@ -18,7 +18,7 @@ return [
         'key' => 'c1f7a5af2f140e9811a1290c185faff8',//支付的key
         'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/notify',
         'log' => [ // optional
-            'file' => './storage/log/wechat.log',
+            'file' => './storage/logs/wechat.log',
             'level' => 'debug'
         ],
     ]

@@ -86,6 +86,9 @@ Route::group(['prefix' => 'v1'],function (){
 
              //支付结果通知
              Route::get('notify','Pay\WxPayController@notify');
+
+             //转账给接单者
+             Route::get('transfer','Pay\WxPayController@transfer');
          });
      });
 });

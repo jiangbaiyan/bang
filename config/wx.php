@@ -21,5 +21,7 @@ return [
             'file' => './storage/logs/wechat.log',
             'level' => 'debug'
         ],
+        'cert_client' => './storage/cert/apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
+        'cert_key' => './storage/cert/apiclient_key.pem',// optional, 退款，红包等情况时需要用到
     ]
 ];

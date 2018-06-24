@@ -24,5 +24,6 @@ return [
             'level' => 'debug'
         ],
         'type' => 'miniapp'
+
     ]
 ];

@@ -17,11 +17,12 @@ return [
         'mch_id' => '1508225431',//商户id
         'key' => 'c1f7a5af2f140e9811a1290c185faff8',//支付的key
         'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/notify',
+        'cert_client' => './apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
+        'cert_key' => './apiclient_key.pem',// optional, 退款，红包等情况时需要用到
         'log' => [ // optional
             'file' => './storage/logs/wechat.log',
             'level' => 'debug'
         ],
-        'cert_client' => './apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
-        'cert_key' => './apiclient_key.pem',// optional, 退款，红包等情况时需要用到
+        'type' => 'miniapp'
     ]
 ];

@@ -25,5 +25,6 @@ return [
         ],
         'type' => 'miniapp'
 
+
     ]
 ];

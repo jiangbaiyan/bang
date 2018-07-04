@@ -11,8 +11,8 @@ namespace App\Http\Controllers\Pay;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
+use App\Service\WxService;
 use App\UserModel;
-use EasyWeChat\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
@@ -20,6 +20,7 @@ use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
 
 class WxPayController extends Controller{
+
 
     /**
      * 统一下单
@@ -38,7 +39,7 @@ class WxPayController extends Controller{
         }
         $order = OrderModel::getOrderById($req['id']);
         $user = UserModel::getCurUser();
-        $app = Factory::payment(config('wechat.payment.default'));
+        $app = WxService::getEasyApp();
         $result = $app->order->unify([
             'body' => $order->title,
             'out_trade_no' => time(),
@@ -55,7 +56,7 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\Exception
      */
     public function notify(){
-        $app = Factory::payment(config('wechat.payment.default'));
+        $app = WxService::getEasyApp();
         $response = $app->handlePaidNotify(function ($message,$fail){
             return true;
         });
@@ -89,8 +90,7 @@ class WxPayController extends Controller{
             'amount' => ($order->price) * 100, // 企业付款金额，单位为分
             'desc' => $order->title, // 企业付款操作说明信息。必填
         ];
-        dd(config('wechat.payment.default'));
-        $app = Factory::payment(config('wechat.payment.default'));
+        $app = WxService::getEasyApp();
         $result = $app->transfer->toBalance($params);
         return ApiResponse::responseSuccess($result);
     }

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Pay;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
+use App\Service\WxService;
 use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -44,7 +45,7 @@ class WxPayController extends Controller{
             'body' => $order->title,
             'openid' => $user->openid,
         ];
-        $res = Pay::wechat(config('wx.pay'))->miniapp($params);
+        $res = WxService::unifyPay($params);
         return ApiResponse::responseSuccess($res);
     }
 
@@ -54,7 +55,7 @@ class WxPayController extends Controller{
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
      */
     public function notify(){
-        $pay = Pay::wechat(config('wx.pay'));
+        $pay = Pay::wechat(WxService::$payConfig);
         $data = $pay->verify();
         Log::debug('Wechat notify', $data->all());
         return $pay->success();
@@ -87,7 +88,7 @@ class WxPayController extends Controller{
             'desc' => $order->title,                   //付款说明
             'type' => 'miniapp'
         ];
-        $res = Pay::wechat(config('wx.pay'))->transfer($params);
+        $res = WxService::transfer($params);
         return ApiResponse::responseSuccess($res);
     }
 }

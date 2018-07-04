@@ -84,11 +84,17 @@ Route::group(['prefix' => 'v1'],function (){
              //统一下单
              Route::get('unifyPay','Pay\WxPayController@unifyPay');
 
+             //微信支付结果通知
+             Route::get('wxNotify','Pay\WxPayController@wxNotify');
+
              //支付结果通知
-             Route::get('notify','Pay\WxPayController@notify');
+             Route::get('aliNotify','Pay\AliPayController@aliNotify');
 
              //转账给接单者
-             Route::get('transfer','Pay\WxPayController@transfer');
+             Route::get('wxTransfer','Pay\WxPayController@wxTransfer');
+
+             //转账给接单者
+             Route::get('aliTransfer','Pay\AliPayController@aliTransfer');
          });
      });
 });

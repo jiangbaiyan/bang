@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use phpDocumentor\Reflection\Types\Self_;
 use src\ApiHelper\ApiRequest;
 use src\Exceptions\OperateFailedException;
 use Yansongda\Pay\Pay;
@@ -18,11 +19,11 @@ class WxService{
 
     private static $appKey = 'c1f7a5af2f140e9811a1290c185f8de0';
 
-    public static $payConfig = [
+    private static $payConfig = [
             'miniapp_id' => 'wx7e2caeca5c50a086', // appId
             'mch_id' => '1508225431',//商户id
             'key' => 'c1f7a5af2f140e9811a1290c185faff8',//支付的key
-            'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/notify',
+            'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/wechatNotify',
             'cert_client' => __DIR__ . '/apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
             'cert_key' => __DIR__ . '/apiclient_key.pem',// optional, 退款，红包等情况时需要用到
             'log' => [ // optional
@@ -33,20 +34,13 @@ class WxService{
     ];
 
     /**
-     * 统一下单
-     * @param array $params
-     * @return \Yansongda\Pay\Gateways\Wechat\MiniappGateway
+     * 获取微信支付实例
+     * @return \Yansongda\Pay\Gateways\Wechat
      */
-    public static function unifyPay(array $params){
-        return Pay::wechat(self::$payConfig)->miniapp($params);
+    public static function getWxPayApp(){
+        return Pay::wechat(self::$payConfig);
     }
 
-    /**
-     *
-     */
-    public static function transfer(array $params){
-        return Pay::wechat(self::$payConfig)->transfer($params);
-    }
     /**
      * 返回openid
      * @param $code
@@ -63,5 +57,4 @@ class WxService{
         }
         return $res['openid'];
     }
-
 }

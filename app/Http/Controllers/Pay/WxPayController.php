@@ -14,12 +14,10 @@ use App\Model\OrderModel;
 use App\Service\WxService;
 use App\UserModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
-use Yansongda\Pay\Pay;
 
 class WxPayController extends Controller{
 
@@ -45,20 +43,20 @@ class WxPayController extends Controller{
             'body' => $order->title,
             'openid' => $user->openid,
         ];
-        $res = WxService::unifyPay($params);
+        $app = WxService::getWxPayApp();
+        $res = $app->miniapp($params);
         return ApiResponse::responseSuccess($res);
     }
 
     /**
-     * 通知微信支付结果
+     * 微信支付返回结果通知
      * @return string
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
      */
-    public function notify(){
-        $pay = Pay::wechat(WxService::$payConfig);
-        $data = $pay->verify();
-        Log::debug('Wechat notify', $data->all());
-        return $pay->success();
+    public function wechatNotify(){
+        $app = WxService::getWxPayApp();
+        $app->verify();
+        return $app->success();
     }
 
 
@@ -70,7 +68,7 @@ class WxPayController extends Controller{
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
      */
-    public function transfer(Request $request){
+    public function wxTransfer(Request $request){
         $req = $request->all();
         $validator = Validator::make($req,['id' => 'required']);
         if ($validator->fails()){
@@ -88,7 +86,8 @@ class WxPayController extends Controller{
             'desc' => $order->title,                   //付款说明
             'type' => 'miniapp'
         ];
-        $res = WxService::transfer($params);
+        $app = WxService::getWxPayApp();
+        $res = $app->transfer($params);
         return ApiResponse::responseSuccess($res);
     }
 }

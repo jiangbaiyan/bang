@@ -22,12 +22,10 @@ use src\Exceptions\ParamValidateFailedException;
 class WxPayController extends Controller{
 
     private $config;
-    private $app;
 
     public function __construct()
     {
         $this->config = config('wechat.payment.default');
-        $this->app = Factory::payment($this->config);
     }
 
     /**
@@ -47,7 +45,8 @@ class WxPayController extends Controller{
         }
         $order = OrderModel::getOrderById($req['id']);
         $user = UserModel::getCurUser();
-        $result = $this->app->order->unify([
+        $app = Factory::payment($this->config);
+        $result = $app->order->unify([
             'body' => $order->title,
             'out_trade_no' => time(),
             'total_fee' => ($order->price) * 100,
@@ -63,7 +62,8 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\Exception
      */
     public function notify(){
-        $response = $this->app->handlePaidNotify(function ($message,$fail){
+        $app = Factory::payment($this->config);
+        $response = $app->handlePaidNotify(function ($message,$fail){
             return true;
         });
         return $response;
@@ -80,7 +80,7 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      */
     public function transfer(Request $request){
-        dd($this->app);
+        dd($this->config);
         $req = $request->all();
         $validator = Validator::make($req,['id' => 'required']);
         if ($validator->fails()){
@@ -97,7 +97,8 @@ class WxPayController extends Controller{
             'amount' => ($order->price) * 100, // 企业付款金额，单位为分
             'desc' => $order->title, // 企业付款操作说明信息。必填
         ];
-        $result = $this->app->transfer->toBalance($params);
+        $app = Factory::payment($this->config);
+        $result = $app->transfer->toBalance($params);
         return ApiResponse::responseSuccess($result);
     }
 }

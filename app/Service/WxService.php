@@ -18,7 +18,7 @@ class WxService{
         'sandbox'            => false,
         'app_id'             => 'wx7e2caeca5c50a086',
         'mch_id'             => '1508225431',
-        'key'                => 'c1f7a5af2f140e9811a1290c185faff8',   // API 密钥
+        'key'                => 'hdu_qlc_2018_01bdf25*9',   // API 密钥
 
         // 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
         'cert_path'          => './storage/cert/apiclient_cert.pem', // XXX: 绝对路径！！！！

@@ -21,6 +21,13 @@ use src\Exceptions\ParamValidateFailedException;
 
 class WxPayController extends Controller{
 
+    private $app;
+
+    public function __construct()
+    {
+        $this->app = Factory::payment(config('wechat.payment.default'));
+    }
+
     /**
      * 统一下单
      * @param Request $request
@@ -38,8 +45,7 @@ class WxPayController extends Controller{
         }
         $order = OrderModel::getOrderById($req['id']);
         $user = UserModel::getCurUser();
-        $app = Factory::payment(config('wechat.payment.default'));
-        $result = $app->order->unify([
+        $result = $this->app->order->unify([
             'body' => $order->title,
             'out_trade_no' => time(),
             'total_fee' => ($order->price) * 100,
@@ -55,8 +61,7 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\Exception
      */
     public function notify(){
-        $app = Factory::payment(config('wechat.payment.default'));
-        $response = $app->handlePaidNotify(function ($message,$fail){
+        $response = $this->app->handlePaidNotify(function ($message,$fail){
             return true;
         });
         return $response;
@@ -82,7 +87,6 @@ class WxPayController extends Controller{
         if ($order->status != OrderModel::statusWaitingComment){
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
-        $app = Factory::payment(config('wechat.payment.default'));
         $params = [
             'partner_trade_no' => $order->id, // 商户订单号，需保持唯一性(只能是字母或者数字，不能包含有符号)
             'openid' => $order->receiver->openid,
@@ -90,7 +94,7 @@ class WxPayController extends Controller{
             'amount' => ($order->price) * 100, // 企业付款金额，单位为分
             'desc' => $order->title, // 企业付款操作说明信息。必填
         ];
-        $result = $app->transfer->toBalance($params);
+        $result = $this->app->transfer->toBalance($params);
         return ApiResponse::responseSuccess($result);
     }
 }

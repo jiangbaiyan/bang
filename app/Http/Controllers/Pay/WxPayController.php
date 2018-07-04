@@ -21,13 +21,11 @@ use src\Exceptions\ParamValidateFailedException;
 
 class WxPayController extends Controller{
 
-    private $payConfig;
-    private $app;
+    private $config;
 
     public function __construct()
     {
-        $this->payConfig = config('wechat.payment.default');
-        $this->app = Factory::payment($this->payConfig);
+        $this->config = config('wechat.payment.default');
     }
 
     /**
@@ -47,7 +45,8 @@ class WxPayController extends Controller{
         }
         $order = OrderModel::getOrderById($req['id']);
         $user = UserModel::getCurUser();
-        $result = $this->app->order->unify([
+        $app = Factory::payment($this->config);
+        $result = $app->order->unify([
             'body' => $order->title,
             'out_trade_no' => time(),
             'total_fee' => ($order->price) * 100,
@@ -63,7 +62,8 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\Exception
      */
     public function notify(){
-        $response = $this->app->handlePaidNotify(function ($message,$fail){
+        $app = Factory::payment($this->config);
+        $response = $app->handlePaidNotify(function ($message,$fail){
             return true;
         });
         return $response;
@@ -89,6 +89,7 @@ class WxPayController extends Controller{
         if ($order->status != OrderModel::statusWaitingComment){
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
+        $app = Factory::payment($this->config);
         $params = [
             'partner_trade_no' => $order->id, // 商户订单号，需保持唯一性(只能是字母或者数字，不能包含有符号)
             'openid' => $order->receiver->openid,
@@ -96,7 +97,7 @@ class WxPayController extends Controller{
             'amount' => ($order->price) * 100, // 企业付款金额，单位为分
             'desc' => $order->title, // 企业付款操作说明信息。必填
         ];
-        $result = $this->app->transfer->toBalance($params);
+        $result = $app->transfer->toBalance($params);
         return ApiResponse::responseSuccess($result);
     }
 }

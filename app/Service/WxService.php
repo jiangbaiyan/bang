@@ -8,32 +8,10 @@
 
 namespace App\Service;
 
-use EasyWeChat\Factory;
 use src\ApiHelper\ApiRequest;
 use src\Exceptions\OperateFailedException;
 
 class WxService{
-
-    private static $payConfig = [
-        'sandbox'            => false,
-        'app_id'             => 'wx7e2caeca5c50a086',
-        'mch_id'             => '1508225431',
-        'key'                => 'c1f7a5af2f140e9811a1290c185faff8',   // API 密钥
-
-        // 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
-        'cert_path'          => __DIR__ . '/' . 'apiclient_cert.pem',
-        'key_path'           => __DIR__ . '/' . 'apiclient_key.pem',
-
-        'notify_url'         => \App\Helper\ConstHelper::HOST . 'pay/notify',     // 你也可以在下单时单独设置来想覆盖它
-    ];
-
-    /**
-     * 返回EasyWechat实例
-     * @return \EasyWeChat\Payment\Application
-     */
-    public static function getEasyApp(){
-        return Factory::payment(self::$payConfig);
-    }
 
     /**
      * 返回openid

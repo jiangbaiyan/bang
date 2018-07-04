@@ -21,8 +21,8 @@ class WxService{
         'key'                => 'c1f7a5af2f140e9811a1290c185faff8',   // API 密钥
 
         // 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
-        'cert_path'          => './storage/cert/apiclient_cert.pem', // XXX: 绝对路径！！！！
-        'key_path'           => './storage/cert/apiclient_key.pem',      // XXX: 绝对路径！！！！
+        'cert_path'          => 'https://bang.cloudshm.com/storage/cert/apiclient_cert.pem', // XXX: 绝对路径！！！！
+        'key_path'           => 'https://bang.cloudshm.com/storage/cert/apiclient_key.pem',      // XXX: 绝对路径！！！！
 
         'notify_url'         => \App\Helper\ConstHelper::HOST . 'pay/notify',     // 你也可以在下单时单独设置来想覆盖它
     ];

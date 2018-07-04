@@ -80,6 +80,7 @@ class WxPayController extends Controller{
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
      */
     public function transfer(Request $request){
+        dd($this->app);
         $req = $request->all();
         $validator = Validator::make($req,['id' => 'required']);
         if ($validator->fails()){
@@ -96,7 +97,6 @@ class WxPayController extends Controller{
             'amount' => ($order->price) * 100, // 企业付款金额，单位为分
             'desc' => $order->title, // 企业付款操作说明信息。必填
         ];
-        dd($this->app);
         $result = $this->app->transfer->toBalance($params);
         return ApiResponse::responseSuccess($result);
     }

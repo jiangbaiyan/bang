@@ -21,11 +21,13 @@ use src\Exceptions\ParamValidateFailedException;
 
 class WxPayController extends Controller{
 
+    private $payConfig;
     private $app;
 
     public function __construct()
     {
-        $this->app = Factory::payment(config('wechat.payment.default'));
+        $this->payConfig = config('wechat.payment.default');
+        $this->app = Factory::payment($this->payConfig);
     }
 
     /**

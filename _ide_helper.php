@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.6.23 on 2018-05-23 09:48:04.
+ * Generated for Laravel 5.6.26 on 2018-07-05 08:34:49.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -306,7 +306,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Detect the application'HelpOthers current environment.
+         * Detect the application's current environment.
          *
          * @param \Closure $callback
          * @return string 
@@ -477,7 +477,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Boot the application'HelpOthers service providers.
+         * Boot the application's service providers.
          *
          * @return void 
          * @static 
@@ -659,7 +659,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the application'HelpOthers deferred services.
+         * Get the application's deferred services.
          *
          * @return array 
          * @static 
@@ -670,7 +670,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Set the application'HelpOthers deferred services.
+         * Set the application's deferred services.
          *
          * @param array $services
          * @return void 
@@ -682,7 +682,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Add an array of services to the application'HelpOthers deferred services.
+         * Add an array of services to the application's deferred services.
          *
          * @param array $services
          * @return void 
@@ -1027,7 +1027,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Bind a new callback to an abstract'HelpOthers rebind event.
+         * Bind a new callback to an abstract's rebind event.
          *
          * @param string $abstract
          * @param \Closure $callback
@@ -1169,7 +1169,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the container'HelpOthers bindings.
+         * Get the container's bindings.
          *
          * @return array 
          * @static 
@@ -1613,12 +1613,317 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the currently authenticated user.
          *
-         * @return \App\UserModel|null
+         * @return \App\UserModel|null 
          * @static 
          */ 
         public static function user()
         {
-            return \Illuminate\Auth\SessionGuard::user();
+            return \Tymon\JWTAuth\JWTGuard::user();
+        }
+        
+        /**
+         * Get the currently authenticated user or throws an exception.
+         *
+         * @throws \Tymon\JWTAuth\Exceptions\UserNotDefinedException
+         * @return \App\UserModel 
+         * @static 
+         */ 
+        public static function userOrFail()
+        {
+            return \Tymon\JWTAuth\JWTGuard::userOrFail();
+        }
+        
+        /**
+         * Validate a user's credentials.
+         *
+         * @param array $credentials
+         * @return bool 
+         * @static 
+         */ 
+        public static function validate($credentials = array())
+        {
+            return \Tymon\JWTAuth\JWTGuard::validate($credentials);
+        }
+        
+        /**
+         * Attempt to authenticate the user using the given credentials and return the token.
+         *
+         * @param array $credentials
+         * @param bool $login
+         * @return bool|string 
+         * @static 
+         */ 
+        public static function attempt($credentials = array(), $login = true)
+        {
+            return \Tymon\JWTAuth\JWTGuard::attempt($credentials, $login);
+        }
+        
+        /**
+         * Create a token for a user.
+         *
+         * @param \Tymon\JWTAuth\Contracts\JWTSubject $user
+         * @return string 
+         * @static 
+         */ 
+        public static function login($user)
+        {
+            return \Tymon\JWTAuth\JWTGuard::login($user);
+        }
+        
+        /**
+         * Logout the user, thus invalidating the token.
+         *
+         * @param bool $forceForever
+         * @return void 
+         * @static 
+         */ 
+        public static function logout($forceForever = false)
+        {
+            \Tymon\JWTAuth\JWTGuard::logout($forceForever);
+        }
+        
+        /**
+         * Refresh the token.
+         *
+         * @param bool $forceForever
+         * @param bool $resetClaims
+         * @return string 
+         * @static 
+         */ 
+        public static function refresh($forceForever = false, $resetClaims = false)
+        {
+            return \Tymon\JWTAuth\JWTGuard::refresh($forceForever, $resetClaims);
+        }
+        
+        /**
+         * Invalidate the token.
+         *
+         * @param bool $forceForever
+         * @return \Tymon\JWTAuth\JWT 
+         * @static 
+         */ 
+        public static function invalidate($forceForever = false)
+        {
+            return \Tymon\JWTAuth\JWTGuard::invalidate($forceForever);
+        }
+        
+        /**
+         * Create a new token by User id.
+         *
+         * @param mixed $id
+         * @return string|null 
+         * @static 
+         */ 
+        public static function tokenById($id)
+        {
+            return \Tymon\JWTAuth\JWTGuard::tokenById($id);
+        }
+        
+        /**
+         * Log a user into the application using their credentials.
+         *
+         * @param array $credentials
+         * @return bool 
+         * @static 
+         */ 
+        public static function once($credentials = array())
+        {
+            return \Tymon\JWTAuth\JWTGuard::once($credentials);
+        }
+        
+        /**
+         * Log the given User into the application.
+         *
+         * @param mixed $id
+         * @return bool 
+         * @static 
+         */ 
+        public static function onceUsingId($id)
+        {
+            return \Tymon\JWTAuth\JWTGuard::onceUsingId($id);
+        }
+        
+        /**
+         * Alias for onceUsingId.
+         *
+         * @param mixed $id
+         * @return bool 
+         * @static 
+         */ 
+        public static function byId($id)
+        {
+            return \Tymon\JWTAuth\JWTGuard::byId($id);
+        }
+        
+        /**
+         * Add any custom claims.
+         *
+         * @param array $claims
+         * @return $this 
+         * @static 
+         */ 
+        public static function claims($claims)
+        {
+            return \Tymon\JWTAuth\JWTGuard::claims($claims);
+        }
+        
+        /**
+         * Get the raw Payload instance.
+         *
+         * @return \Tymon\JWTAuth\Payload 
+         * @static 
+         */ 
+        public static function getPayload()
+        {
+            return \Tymon\JWTAuth\JWTGuard::getPayload();
+        }
+        
+        /**
+         * Alias for getPayload().
+         *
+         * @return \Tymon\JWTAuth\Payload 
+         * @static 
+         */ 
+        public static function payload()
+        {
+            return \Tymon\JWTAuth\JWTGuard::payload();
+        }
+        
+        /**
+         * Set the token.
+         *
+         * @param \Tymon\JWTAuth\Token|string $token
+         * @return $this 
+         * @static 
+         */ 
+        public static function setToken($token)
+        {
+            return \Tymon\JWTAuth\JWTGuard::setToken($token);
+        }
+        
+        /**
+         * Set the token ttl.
+         *
+         * @param int $ttl
+         * @return $this 
+         * @static 
+         */ 
+        public static function setTTL($ttl)
+        {
+            return \Tymon\JWTAuth\JWTGuard::setTTL($ttl);
+        }
+        
+        /**
+         * Get the user provider used by the guard.
+         *
+         * @return \Illuminate\Contracts\Auth\UserProvider 
+         * @static 
+         */ 
+        public static function getProvider()
+        {
+            return \Tymon\JWTAuth\JWTGuard::getProvider();
+        }
+        
+        /**
+         * Set the user provider used by the guard.
+         *
+         * @param \Illuminate\Contracts\Auth\UserProvider $provider
+         * @return $this 
+         * @static 
+         */ 
+        public static function setProvider($provider)
+        {
+            return \Tymon\JWTAuth\JWTGuard::setProvider($provider);
+        }
+        
+        /**
+         * Return the currently cached user.
+         *
+         * @return \App\UserModel|null 
+         * @static 
+         */ 
+        public static function getUser()
+        {
+            return \Tymon\JWTAuth\JWTGuard::getUser();
+        }
+        
+        /**
+         * Get the current request instance.
+         *
+         * @return \Illuminate\Http\Request 
+         * @static 
+         */ 
+        public static function getRequest()
+        {
+            return \Tymon\JWTAuth\JWTGuard::getRequest();
+        }
+        
+        /**
+         * Set the current request instance.
+         *
+         * @param \Illuminate\Http\Request $request
+         * @return $this 
+         * @static 
+         */ 
+        public static function setRequest($request)
+        {
+            return \Tymon\JWTAuth\JWTGuard::setRequest($request);
+        }
+        
+        /**
+         * Get the last user we attempted to authenticate.
+         *
+         * @return \App\UserModel 
+         * @static 
+         */ 
+        public static function getLastAttempted()
+        {
+            return \Tymon\JWTAuth\JWTGuard::getLastAttempted();
+        }
+        
+        /**
+         * Determine if the current user is authenticated.
+         *
+         * @return \App\UserModel 
+         * @throws \Illuminate\Auth\AuthenticationException
+         * @static 
+         */ 
+        public static function authenticate()
+        {
+            return \Tymon\JWTAuth\JWTGuard::authenticate();
+        }
+        
+        /**
+         * Determine if the guard has a user instance.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasUser()
+        {
+            return \Tymon\JWTAuth\JWTGuard::hasUser();
+        }
+        
+        /**
+         * Determine if the current user is authenticated.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function check()
+        {
+            return \Tymon\JWTAuth\JWTGuard::check();
+        }
+        
+        /**
+         * Determine if the current user is a guest.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function guest()
+        {
+            return \Tymon\JWTAuth\JWTGuard::guest();
         }
         
         /**
@@ -1629,259 +1934,7 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function id()
         {
-            return \Illuminate\Auth\SessionGuard::id();
-        }
-        
-        /**
-         * Log a user into the application without sessions or cookies.
-         *
-         * @param array $credentials
-         * @return bool 
-         * @static 
-         */ 
-        public static function once($credentials = array())
-        {
-            return \Illuminate\Auth\SessionGuard::once($credentials);
-        }
-        
-        /**
-         * Log the given user ID into the application without sessions or cookies.
-         *
-         * @param mixed $id
-         * @return \App\UserModel|false
-         * @static 
-         */ 
-        public static function onceUsingId($id)
-        {
-            return \Illuminate\Auth\SessionGuard::onceUsingId($id);
-        }
-        
-        /**
-         * Validate a user'HelpOthers credentials.
-         *
-         * @param array $credentials
-         * @return bool 
-         * @static 
-         */ 
-        public static function validate($credentials = array())
-        {
-            return \Illuminate\Auth\SessionGuard::validate($credentials);
-        }
-        
-        /**
-         * Attempt to authenticate using HTTP Basic Auth.
-         *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @static 
-         */ 
-        public static function basic($field = 'email', $extraConditions = array())
-        {
-            return \Illuminate\Auth\SessionGuard::basic($field, $extraConditions);
-        }
-        
-        /**
-         * Perform a stateless HTTP Basic login attempt.
-         *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @static 
-         */ 
-        public static function onceBasic($field = 'email', $extraConditions = array())
-        {
-            return \Illuminate\Auth\SessionGuard::onceBasic($field, $extraConditions);
-        }
-        
-        /**
-         * Attempt to authenticate a user using the given credentials.
-         *
-         * @param array $credentials
-         * @param bool $remember
-         * @return bool 
-         * @static 
-         */ 
-        public static function attempt($credentials = array(), $remember = false)
-        {
-            return \Illuminate\Auth\SessionGuard::attempt($credentials, $remember);
-        }
-        
-        /**
-         * Log the given user ID into the application.
-         *
-         * @param mixed $id
-         * @param bool $remember
-         * @return \App\UserModel|false
-         * @static 
-         */ 
-        public static function loginUsingId($id, $remember = false)
-        {
-            return \Illuminate\Auth\SessionGuard::loginUsingId($id, $remember);
-        }
-        
-        /**
-         * Log a user into the application.
-         *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @param bool $remember
-         * @return void 
-         * @static 
-         */ 
-        public static function login($user, $remember = false)
-        {
-            \Illuminate\Auth\SessionGuard::login($user, $remember);
-        }
-        
-        /**
-         * Log the user out of the application.
-         *
-         * @return void 
-         * @static 
-         */ 
-        public static function logout()
-        {
-            \Illuminate\Auth\SessionGuard::logout();
-        }
-        
-        /**
-         * Invalid other sessions for the current user.
-         * 
-         * The application must be using the AuthenticateSession middleware.
-         *
-         * @param string $password
-         * @param string $attribute
-         * @return $this 
-         * @static 
-         */ 
-        public static function logoutOtherDevices($password, $attribute = 'password')
-        {
-            return \Illuminate\Auth\SessionGuard::logoutOtherDevices($password, $attribute);
-        }
-        
-        /**
-         * Register an authentication attempt event listener.
-         *
-         * @param mixed $callback
-         * @return void 
-         * @static 
-         */ 
-        public static function attempting($callback)
-        {
-            \Illuminate\Auth\SessionGuard::attempting($callback);
-        }
-        
-        /**
-         * Get the last user we attempted to authenticate.
-         *
-         * @return \App\UserModel
-         * @static 
-         */ 
-        public static function getLastAttempted()
-        {
-            return \Illuminate\Auth\SessionGuard::getLastAttempted();
-        }
-        
-        /**
-         * Get a unique identifier for the auth session value.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getName()
-        {
-            return \Illuminate\Auth\SessionGuard::getName();
-        }
-        
-        /**
-         * Get the name of the cookie used to store the "recaller".
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getRecallerName()
-        {
-            return \Illuminate\Auth\SessionGuard::getRecallerName();
-        }
-        
-        /**
-         * Determine if the user was authenticated via "remember me" cookie.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function viaRemember()
-        {
-            return \Illuminate\Auth\SessionGuard::viaRemember();
-        }
-        
-        /**
-         * Get the cookie creator instance used by the guard.
-         *
-         * @return \Illuminate\Contracts\Cookie\QueueingFactory 
-         * @throws \RuntimeException
-         * @static 
-         */ 
-        public static function getCookieJar()
-        {
-            return \Illuminate\Auth\SessionGuard::getCookieJar();
-        }
-        
-        /**
-         * Set the cookie creator instance used by the guard.
-         *
-         * @param \Illuminate\Contracts\Cookie\QueueingFactory $cookie
-         * @return void 
-         * @static 
-         */ 
-        public static function setCookieJar($cookie)
-        {
-            \Illuminate\Auth\SessionGuard::setCookieJar($cookie);
-        }
-        
-        /**
-         * Get the event dispatcher instance.
-         *
-         * @return \Illuminate\Contracts\Events\Dispatcher 
-         * @static 
-         */ 
-        public static function getDispatcher()
-        {
-            return \Illuminate\Auth\SessionGuard::getDispatcher();
-        }
-        
-        /**
-         * Set the event dispatcher instance.
-         *
-         * @param \Illuminate\Contracts\Events\Dispatcher $events
-         * @return void 
-         * @static 
-         */ 
-        public static function setDispatcher($events)
-        {
-            \Illuminate\Auth\SessionGuard::setDispatcher($events);
-        }
-        
-        /**
-         * Get the session store used by the guard.
-         *
-         * @return \Illuminate\Contracts\Session\Session 
-         * @static 
-         */ 
-        public static function getSession()
-        {
-            return \Illuminate\Auth\SessionGuard::getSession();
-        }
-        
-        /**
-         * Return the currently cached user.
-         *
-         * @return \App\UserModel|null
-         * @static 
-         */ 
-        public static function getUser()
-        {
-            return \Illuminate\Auth\SessionGuard::getUser();
+            return \Tymon\JWTAuth\JWTGuard::id();
         }
         
         /**
@@ -1893,125 +1946,7 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function setUser($user)
         {
-            return \Illuminate\Auth\SessionGuard::setUser($user);
-        }
-        
-        /**
-         * Get the current request instance.
-         *
-         * @return \Symfony\Component\HttpFoundation\Request 
-         * @static 
-         */ 
-        public static function getRequest()
-        {
-            return \Illuminate\Auth\SessionGuard::getRequest();
-        }
-        
-        /**
-         * Set the current request instance.
-         *
-         * @param \Symfony\Component\HttpFoundation\Request $request
-         * @return $this 
-         * @static 
-         */ 
-        public static function setRequest($request)
-        {
-            return \Illuminate\Auth\SessionGuard::setRequest($request);
-        }
-        
-        /**
-         * Determine if the current user is authenticated.
-         *
-         * @return \App\UserModel
-         * @throws \Illuminate\Auth\AuthenticationException
-         * @static 
-         */ 
-        public static function authenticate()
-        {
-            return \Illuminate\Auth\SessionGuard::authenticate();
-        }
-        
-        /**
-         * Determine if the current user is authenticated.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function check()
-        {
-            return \Illuminate\Auth\SessionGuard::check();
-        }
-        
-        /**
-         * Determine if the current user is a guest.
-         *
-         * @return bool 
-         * @static 
-         */ 
-        public static function guest()
-        {
-            return \Illuminate\Auth\SessionGuard::guest();
-        }
-        
-        /**
-         * Get the user provider used by the guard.
-         *
-         * @return \Illuminate\Contracts\Auth\UserProvider 
-         * @static 
-         */ 
-        public static function getProvider()
-        {
-            return \Illuminate\Auth\SessionGuard::getProvider();
-        }
-        
-        /**
-         * Set the user provider used by the guard.
-         *
-         * @param \Illuminate\Contracts\Auth\UserProvider $provider
-         * @return void 
-         * @static 
-         */ 
-        public static function setProvider($provider)
-        {
-            \Illuminate\Auth\SessionGuard::setProvider($provider);
-        }
-        
-        /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @return void 
-         * @static 
-         */ 
-        public static function macro($name, $macro)
-        {
-            \Illuminate\Auth\SessionGuard::macro($name, $macro);
-        }
-        
-        /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */ 
-        public static function mixin($mixin)
-        {
-            \Illuminate\Auth\SessionGuard::mixin($mixin);
-        }
-        
-        /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasMacro($name)
-        {
-            return \Illuminate\Auth\SessionGuard::hasMacro($name);
+            return \Tymon\JWTAuth\JWTGuard::setUser($user);
         }
          
     }
@@ -2792,7 +2727,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Wipes clean the entire cache'HelpOthers keys.
+         * Wipes clean the entire cache's keys.
          *
          * @return bool True on success and false on failure.
          * @static 
@@ -3338,7 +3273,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param mixed $payload
          * @param bool $unserialize
-         * @return string 
+         * @return mixed 
          * @throws \Illuminate\Contracts\Encryption\DecryptException
          * @static 
          */ 
@@ -3745,7 +3680,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Log a query in the connection'HelpOthers query log.
+         * Log a query in the connection's query log.
          *
          * @param string $query
          * @param array $bindings
@@ -4735,7 +4670,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the file'HelpOthers last modification time.
+         * Get the file's last modification time.
          *
          * @param string $path
          * @return int 
@@ -5968,7 +5903,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Queue a new e-mail message for sending on the given queue.
          * 
-         * This method didn't match rest of framework'HelpOthers "onQueue" phrasing. Added "onQueue".
+         * This method didn't match rest of framework's "onQueue" phrasing. Added "onQueue".
          *
          * @param string $queue
          * @param string|array $view
@@ -6804,6 +6739,46 @@ namespace Illuminate\Support\Facades {
          
     }
 
+    class Redis {
+        
+        /**
+         * Get a Redis connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @static 
+         */ 
+        public static function connection($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::connection($name);
+        }
+        
+        /**
+         * Resolve the given connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function resolve($name = null)
+        {
+            return \Illuminate\Redis\RedisManager::resolve($name);
+        }
+        
+        /**
+         * Return all of the created connections.
+         *
+         * @return array 
+         * @static 
+         */ 
+        public static function connections()
+        {
+            return \Illuminate\Redis\RedisManager::connections();
+        }
+         
+    }
+
     class Request {
         
         /**
@@ -7033,7 +7008,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Merge new input into the current request'HelpOthers input array.
+         * Merge new input into the current request's input array.
          *
          * @param array $input
          * @return \Illuminate\Http\Request 
@@ -7321,7 +7296,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Creates a new request with values from PHP'HelpOthers super globals.
+         * Creates a new request with values from PHP's super globals.
          *
          * @return static 
          * @static 
@@ -7559,6 +7534,18 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * 
+         *
+         * @internal 
+         * @static 
+         */ 
+        public static function setSessionFactory($factory)
+        {
+            //Method inherited from \Symfony\Component\HttpFoundation\Request            
+            return \Illuminate\Http\Request::setSessionFactory($factory);
+        }
+        
+        /**
          * Returns the client IP addresses.
          * 
          * In the returned array the most trusted IP address is first, and the
@@ -7667,7 +7654,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Gets the request'HelpOthers scheme.
+         * Gets the request's scheme.
          *
          * @return string 
          * @static 
@@ -7734,7 +7721,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Returns the HTTP host being requested.
          * 
-         * The port name will be appended to the host if it'HelpOthers non-standard.
+         * The port name will be appended to the host if it's non-standard.
          *
          * @return string 
          * @static 
@@ -8512,7 +8499,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if the request contains any of the given inputs.
          *
-         * @param string|array $key
+         * @param string|array $keys
          * @return bool 
          * @static 
          */ 
@@ -9809,6 +9796,17 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Drop all views from the database.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function dropAllViews()
+        {
+            \Illuminate\Database\Schema\MySqlBuilder::dropAllViews();
+        }
+        
+        /**
          * Set the default string length for migrations.
          *
          * @param int $length
@@ -10661,12 +10659,12 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $name
          * @param mixed $disk
-         * @return void 
+         * @return $this 
          * @static 
          */ 
         public static function set($name, $disk)
         {
-            \Illuminate\Filesystem\FilesystemManager::set($name, $disk);
+            return \Illuminate\Filesystem\FilesystemManager::set($name, $disk);
         }
         
         /**
@@ -10965,7 +10963,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the file'HelpOthers last modification time.
+         * Get the file's last modification time.
          *
          * @param string $path
          * @return int 
@@ -12308,7 +12306,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Increment the top loop'HelpOthers indices.
+         * Increment the top loop's indices.
          *
          * @return void 
          * @static 
@@ -13247,7 +13245,7 @@ namespace  {
             }
          
             /**
-             * Get a single column'HelpOthers value from the first result of a query.
+             * Get a single column's value from the first result of a query.
              *
              * @param string $column
              * @return mixed 
@@ -13578,7 +13576,7 @@ namespace  {
             }
          
             /**
-             * Apply the callback'HelpOthers query changes if the given "value" is true.
+             * Apply the callback's query changes if the given "value" is true.
              *
              * @param mixed $value
              * @param callable $callback
@@ -13604,7 +13602,7 @@ namespace  {
             }
          
             /**
-             * Apply the callback'HelpOthers query changes if the given "value" is false.
+             * Apply the callback's query changes if the given "value" is false.
              *
              * @param mixed $value
              * @param callable $callback
@@ -14536,6 +14534,61 @@ namespace  {
             }
          
             /**
+             * Add a "where JSON contains" clause to the query.
+             *
+             * @param string $column
+             * @param mixed $value
+             * @param string $boolean
+             * @param bool $not
+             * @return $this 
+             * @static 
+             */ 
+            public static function whereJsonContains($column, $value, $boolean = 'and', $not = false)
+            {    
+                return \Illuminate\Database\Query\Builder::whereJsonContains($column, $value, $boolean, $not);
+            }
+         
+            /**
+             * Add a "or where JSON contains" clause to the query.
+             *
+             * @param string $column
+             * @param mixed $value
+             * @return $this 
+             * @static 
+             */ 
+            public static function orWhereJsonContains($column, $value)
+            {    
+                return \Illuminate\Database\Query\Builder::orWhereJsonContains($column, $value);
+            }
+         
+            /**
+             * Add a "where JSON not contains" clause to the query.
+             *
+             * @param string $column
+             * @param mixed $value
+             * @param string $boolean
+             * @return $this 
+             * @static 
+             */ 
+            public static function whereJsonDoesntContain($column, $value, $boolean = 'and')
+            {    
+                return \Illuminate\Database\Query\Builder::whereJsonDoesntContain($column, $value, $boolean);
+            }
+         
+            /**
+             * Add a "or where JSON not contains" clause to the query.
+             *
+             * @param string $column
+             * @param mixed $value
+             * @return $this 
+             * @static 
+             */ 
+            public static function orWhereJsonDoesntContain($column, $value)
+            {    
+                return \Illuminate\Database\Query\Builder::orWhereJsonDoesntContain($column, $value);
+            }
+         
+            /**
              * Handles dynamic "where" clauses to the query.
              *
              * @param string $method
@@ -14666,7 +14719,7 @@ namespace  {
             }
          
             /**
-             * Put the query'HelpOthers results in random order.
+             * Put the query's results in random order.
              *
              * @param string $seed
              * @return $this 
@@ -14755,7 +14808,7 @@ namespace  {
              * Constrain the query to the next "page" of results after a given ID.
              *
              * @param int $perPage
-             * @param int $lastId
+             * @param int|null $lastId
              * @param string $column
              * @return \Illuminate\Database\Query\Builder|static 
              * @static 
@@ -15234,6 +15287,8 @@ namespace  {
     class Queue extends \Illuminate\Support\Facades\Queue {}
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
+
+    class Redis extends \Illuminate\Support\Facades\Redis {}
 
     class Request extends \Illuminate\Support\Facades\Request {}
 

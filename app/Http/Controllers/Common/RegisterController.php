@@ -55,7 +55,8 @@ class RegisterController extends Controller{
         $validator = Validator::make($req,[
             'phone' => 'required|unique:users',
             'password' => 'required',
-            'code' => 'required'
+            'code' => 'required',
+            'alipayAccount' => 'required'
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
@@ -67,6 +68,7 @@ class RegisterController extends Controller{
         $userData = [];
         $userData['phone'] = $phone;
         $userData['password'] = \Hash::make($password);
+        $userData['alipayAccount'] = $req['alipayAccount'];
         Cache::put('user'.$phone,$userData,10);
         return ApiResponse::responseSuccess();
     }
@@ -108,9 +110,9 @@ class RegisterController extends Controller{
         $userData['openid'] = $openid;
         $userData['name'] = $req['nickName'];
         $userData['avatar'] = $req['avatarUrl'];
-        $user['sex'] = $sex;
-        $user['province'] = $req['province'];
-        $user['city'] = $req['city'];
+        $userData['sex'] = $sex;
+        $userData['province'] = $req['province'];
+        $userData['city'] = $req['city'];
         $user = UserModel::create($userData);
         if (!$user){
             throw new OperateFailedException();

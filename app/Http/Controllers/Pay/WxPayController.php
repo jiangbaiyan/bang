@@ -38,7 +38,7 @@ class WxPayController extends Controller{
         $order = OrderModel::getOrderById($req['id']);
         $user = UserModel::getCurUser();
         $params = [
-            'out_trade_no' => time(),
+            'out_trade_no' => $order->uuid,
             'total_fee' => ($order->price) * 100, // **单位：分**
             'body' => $order->title,
             'openid' => $user->openid,
@@ -79,7 +79,7 @@ class WxPayController extends Controller{
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $params = [
-            'partner_trade_no' => time(),              //商户订单号
+            'partner_trade_no' => $order->uuid,              //商户订单号
             'openid' => $order->receiver->openid,        //收款人的openid
             'check_name' => 'NO_CHECK',                //NO_CHECK：不校验真实姓名\FORCE_CHECK：强校验真实姓名
             'amount' => ($order->price) * 100,         //企业付款金额，单位为分

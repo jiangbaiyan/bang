@@ -11,7 +11,6 @@ use App\Http\Controllers\Controller;
 use App\Helper\ConstHelper;
 use App\Model\OrderModel;
 use App\Service\AliService;
-use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
@@ -36,14 +35,13 @@ class AliPayController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        $userAliAccount = UserModel::getCurUser()->aliAccount;
         if ($order->status != OrderModel::statusWaitingComment){
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $params = [
-            'out_biz_no' => time(),
+            'out_biz_no' => $order->uuid,
             'payee_type' => 'ALIPAY_LOGONID',
-            'payee_account' => $userAliAccount,
+            'payee_account' => $order->receiver->alipay_account,
             'amount' => $order->price,
         ];
         $app = AliService::getAliPayApp();

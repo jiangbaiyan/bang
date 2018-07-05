@@ -14,6 +14,7 @@ use App\Model\OrderModel;
 use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Ramsey\Uuid\Uuid;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
@@ -50,6 +51,7 @@ class AskForHelpController extends Controller{
         $orderModel->status = OrderModel::statusReleased;
         $orderModel->price = $req['price'];
         $orderModel->sender_id = UserModel::getCurUser(true);
+        $orderModel->uuid = time() . mt_rand(0,100000);
         if (!$orderModel->save()){
             throw new OperateFailedException();
         };
@@ -57,7 +59,7 @@ class AskForHelpController extends Controller{
     }
 
     /**
-     * 删除(取消)订单
+     * 取消订单(软删除）
      * @param Request $request
      * @return string
      * @throws OperateFailedException
@@ -65,7 +67,7 @@ class AskForHelpController extends Controller{
      * @throws \src\Exceptions\ResourceNotFoundException
      * @throws \Exception
      */
-    public function deleteOrder(Request $request){
+    public function cancelOrder(Request $request){
         $req = $request->all();
         $validator = Validator::make($req,['id' => 'required']);
         if ($validator->fails()){
@@ -75,9 +77,11 @@ class AskForHelpController extends Controller{
         if ($order->status != OrderModel::statusReleased){
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
-        if (!$order->delete()){
+        $order->delete();
+        if (!$order->trashed()){
             throw new OperateFailedException();
         }
+        //TODO:微信退款逻辑
         return ApiResponse::responseSuccess();
     }
 }

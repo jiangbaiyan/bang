@@ -41,7 +41,7 @@ Route::group(['prefix' => 'v1'],function (){
              Route::post('releaseOrder','AskForHelp\AskForHelpController@releaseOrder');
 
              //删除订单
-             Route::post('deleteOrder','AskForHelp\AskForHelpController@deleteOrder');
+             Route::post('cancelOrder','AskForHelp\AskForHelpController@cancelOrder');
 
          });
 

@@ -5,13 +5,18 @@ namespace App\Model;
 use App\Helper\ConstHelper;
 use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use src\Exceptions\ResourceNotFoundException;
 
 class OrderModel extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'orders';
 
     protected $guarded = ['id'];
+
+    protected $dates = ['delete_at'];
 
     /**
      * 订单状态

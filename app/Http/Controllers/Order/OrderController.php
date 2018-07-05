@@ -28,6 +28,7 @@ class OrderController extends Controller{
     public function getSentOrder(){
         $user = UserModel::getCurUser();
         $datas = $user->sendOrders()
+            ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest()
             ->simplePaginate(10);
@@ -45,6 +46,7 @@ class OrderController extends Controller{
     public function getReceivedOrder(){
         $user = UserModel::getCurUser();
         $datas = $user->receiveOrders()
+            ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest()
             ->simplePaginate(10);
@@ -98,5 +100,13 @@ class OrderController extends Controller{
         $receiver->point += $req['star'];
         $receiver->save();
         return ApiResponse::responseSuccess();
+    }
+
+    /**
+     * 永久删除订单
+     * @param Request $request
+     */
+    public function deleteOrder(Request $request){
+
     }
 }

@@ -14,7 +14,6 @@ use App\Model\OrderModel;
 use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Ramsey\Uuid\Uuid;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;

@@ -44,18 +44,26 @@ class HelpOthersController extends Controller{
      * @return string
      */
     public function getReleasedOrdersList(Request $request){
+        $req = $request->all();
+        $validator = Validator::make($req,['longitude' => 'required','latitude' => 'required']);
+        if ($validator->fails()){
+            throw new ParamValidateFailedException($validator);
+        }
         $param = $request->input('type');
         $orderModel = new OrderModel();
-        $res = $orderModel
-            ->select('id','title','content','begin_time','end_time','price')
+        $orders = $orderModel
+            ->select('id','title','content','begin_time','end_time','price','longitude','latitude')
             ->where('status',OrderModel::statusReleased)
             ->latest();
         if (isset($param)){
-            $res = $res->where('type',$param);
+            $res = $orders->where('type',$param);
         }
         $datas = $res->simplePaginate(10);
-        foreach ($datas as $items){
-            $items->content = str_limit($items->content,100,'...');
+        $curLng = $req['longitude'];
+        $curLat = $req['latitude'];
+        foreach ($datas as $item){
+            $item->content = str_limit($item->content,100,'...');
+            $item->distance = OrderModel::getDistance($curLng,$curLat,$item->longitude,$item->latitude);
         }
         return ApiResponse::responseSuccess($datas);
     }
@@ -95,9 +103,7 @@ class HelpOthersController extends Controller{
         }
         $order->status = OrderModel::statusRunning;
         $order->receiver_id = $userId;
-        if (!$order->save()){
-            throw new OperateFailedException();
-        }
+        $order->save();
         return ApiResponse::responseSuccess();
     }
 
@@ -127,9 +133,7 @@ class HelpOthersController extends Controller{
         $receiver->point += OrderModel::awardReceiverPoint;
         $receiver->save();
         $order->status = OrderModel::statusWaitingComment;
-        if (!$order->save()){
-            throw new OperateFailedException();
-        }
+        $order->save();
         return ApiResponse::responseSuccess();
     }
 }

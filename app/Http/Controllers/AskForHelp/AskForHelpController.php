@@ -36,7 +36,9 @@ class AskForHelpController extends Controller{
             'beginTime' => 'required|date|before:'.$req['endTime'],
             'endTime' => 'required|date',
             'type' => 'required',
-            'price' => 'required'
+            'price' => 'required',
+            'longitude' => 'required',
+            'latitude' => 'required'
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
@@ -51,6 +53,8 @@ class AskForHelpController extends Controller{
         $orderModel->price = $req['price'];
         $orderModel->sender_id = UserModel::getCurUser(true);
         $orderModel->uuid = time() . mt_rand(0,100000);
+        $orderModel->longitude = $req['longitude'];
+        $orderModel->latitude = $req['latitude'];
         if (!$orderModel->save()){
             throw new OperateFailedException();
         };

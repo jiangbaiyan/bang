@@ -96,6 +96,8 @@ class OrderController extends Controller{
         if (!isset($order->receiver)){
             throw new OperateFailedException(ConstHelper::USER);
         }
+        $order->status = OrderModel::statusFinished;
+        $order->save();
         $receiver = $order->receiver;
         $receiver->point += $req['star'];
         $receiver->save();

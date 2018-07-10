@@ -63,7 +63,11 @@ class HelpOthersController extends Controller{
         $curLat = $req['latitude'];
         foreach ($datas as $item){
             $item->content = str_limit($item->content,100,'...');
-            $item->distance = OrderModel::getDistance($curLng,$curLat,$item->longitude,$item->latitude);
+            $distance = OrderModel::getDistance($curLng,$curLat,$item->longitude, $item->latitude);
+            if ($distance > 6){
+                unset($item);
+            }
+            $item->distance = $distance;
         }
         return ApiResponse::responseSuccess($datas);
     }

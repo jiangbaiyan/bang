@@ -26,7 +26,9 @@ class OrderModel extends Model
         statusReleased = 1,//已发布
         statusRunning = 2,//正在服务
         statusWaitingComment = 3,//服务完成等待评价
-        statusFinished = 4;//评价完成
+        statusFinished = 4,//评价完成
+        statusCanceled = 5;//订单取消
+
 
     /**
      * 订单类别
@@ -83,7 +85,7 @@ class OrderModel extends Model
     }
 
     /**
-     * 获取两个订单之间定位的距离
+     * 获取两个订单之间的距离
      * @param $lng1
      * @param $lat1
      * @param $lng2
@@ -98,6 +100,6 @@ class OrderModel extends Model
         $a = $radLat1 - $radLat2;
         $b = $radLng1 - $radLng2;
         $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6378.137;
-        return $s . 'km';
+        return $s;
     }
 }

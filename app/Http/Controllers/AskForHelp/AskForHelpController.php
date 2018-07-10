@@ -84,6 +84,8 @@ class AskForHelpController extends Controller{
         if (!$order->trashed()){
             throw new OperateFailedException();
         }
+        $order->status = OrderModel::statusCanceled;
+        $order->save();
         //TODO:微信退款逻辑
         return ApiResponse::responseSuccess();
     }

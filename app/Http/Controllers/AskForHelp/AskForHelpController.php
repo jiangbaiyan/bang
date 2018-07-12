@@ -24,6 +24,7 @@ class AskForHelpController extends Controller{
     /**
      * 求支援发布订单
      * @param Request $request
+     * @return string
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\UnAuthorizedException
      * @throws OperateFailedException

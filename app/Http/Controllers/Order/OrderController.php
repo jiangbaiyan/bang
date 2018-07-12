@@ -34,12 +34,13 @@ class OrderController extends Controller{
             ->select('id','title','status','content','price','updated_at')
             ->latest();
         $limitParams = OrderModel::calculateLimitParam($request->get('page'),$size);
-        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get();
+        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
         $count = $middleRes->count();
         $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
         foreach ($datas as $items){
             $items->content = str_limit($items->content,100,'...');
-        }        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
+        }
+        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
     }
 
     /**
@@ -56,7 +57,7 @@ class OrderController extends Controller{
             ->select('id','title','status','content','price','updated_at')
             ->latest();
         $limitParams = OrderModel::calculateLimitParam($request->get('page'),$size);
-        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get();
+        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
         $count = $middleRes->count();
         $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
         foreach ($datas as $items){

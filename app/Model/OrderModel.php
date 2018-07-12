@@ -114,8 +114,13 @@ class OrderModel extends Model
      * @return array
      */
     public static function calculateLimitParam($page,$pageSize = 10){
+        if (empty($page)){
+            $offset = 0;
+        } else{
+            $offset = ($page - 1) * $pageSize + 1;
+        }
         return [
-            'offset' => ($page - 1) * $pageSize + 1,
+            'offset' => $offset,
             'size' => $pageSize
         ];
     }

@@ -26,21 +26,15 @@ class OrderController extends Controller{
      * @throws \src\Exceptions\UnAuthorizedException
      */
     public function getSentOrder(Request $request){
-        $page = $request->get('page') ?? 0;
+        $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
         $user = UserModel::getCurUser();
         $middleRes = $user->sendOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest();
-        $limitParams = OrderModel::calculateLimitParam($page,$size);
-        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
-        $count = $middleRes->count();
-        $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
-        foreach ($datas as $items){
-            $items['content'] = str_limit($items['content'],100,'...');
-        }
-        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
+        $data = OrderModel::packLimitData($middleRes,$page,$size,$request->fullUrl());
+        return ApiResponse::responseSuccess($data);
     }
 
     /**
@@ -49,21 +43,15 @@ class OrderController extends Controller{
      * @throws \src\Exceptions\UnAuthorizedException
      */
     public function getReceivedOrder(Request $request){
-        $page = $request->get('page') ?? 0;
+        $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
         $user = UserModel::getCurUser();
         $middleRes = $user->receiveOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest();
-        $limitParams = OrderModel::calculateLimitParam($page,$size);
-        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
-        $count = $middleRes->count();
-        $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
-        foreach ($datas as $items){
-            $items['content'] = str_limit($items['content'],100,'...');
-        }
-        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
+        $data = OrderModel::packLimitData($middleRes,$page,$size,$request->fullUrl());
+        return ApiResponse::responseSuccess($data);
     }
 
     /**

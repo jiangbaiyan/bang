@@ -6,6 +6,7 @@ use App\Helper\ConstHelper;
 use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 use src\Exceptions\ResourceNotFoundException;
 
 class OrderModel extends Model
@@ -117,7 +118,7 @@ class OrderModel extends Model
         if (empty($page)){
             $offset = 0;
         } else{
-            $offset = ($page - 1) * $pageSize + 1;
+            $offset = ($page - 1) * $pageSize;
         }
         return [
             'offset' => $offset,
@@ -176,5 +177,27 @@ class OrderModel extends Model
             'nextPageUrl' => $nextPageUrl,
             'prevPageUrl' => $prevPageUrl
         ];
+    }
+
+    /**
+     * 打包数据和分页结果一起返回给客户端
+     * @param $midData
+     * @param $curPage
+     * @param $baseUrl
+     * @param $offset
+     * @param $limit
+     * @return array
+     */
+    public static function packLimitData($midData,$curPage,$pageSize,$baseUrl){
+        $limitParams = self::calculateLimitParam($curPage);
+        $offset = $limitParams['offset'];
+        $limit = $limitParams['size'];
+        $datas = $midData->offset($offset)->limit($limit)->get()->toArray();
+        $count = $midData->count();
+        $limitRes = self::calculatePage($count,$curPage,$baseUrl,$pageSize);
+        foreach ($datas as $items){
+            $items['content'] = str_limit($items['content'],100,'...');
+        }
+        return array_merge($datas,$limitRes);
     }
 }

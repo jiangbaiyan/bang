@@ -37,8 +37,9 @@ class OrderController extends Controller{
         $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
         $count = $middleRes->count();
         $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
+        dd($datas);
         foreach ($datas as $items){
-            $items->content = str_limit($items->content,100,'...');
+            $items['content'] = str_limit($items['content'],100,'...');
         }
         return ApiResponse::responseSuccess(array_merge($datas,$pageData));
     }

@@ -34,6 +34,7 @@ class OrderController extends Controller{
             ->select('id','title','status','content','price','updated_at')
             ->latest();
         $limitParams = OrderModel::calculateLimitParam($request->get('page'),$size);
+        dd($limitParams);
         $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get()->toArray();
         $count = $middleRes->count();
         $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);

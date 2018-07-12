@@ -25,17 +25,21 @@ class OrderController extends Controller{
      * @return string
      * @throws \src\Exceptions\UnAuthorizedException
      */
-    public function getSentOrder(){
+    public function getSentOrder(Request $request){
+        $page = $request->get('page');
+        $size = $request->get('size');
         $user = UserModel::getCurUser();
-        $datas = $user->sendOrders()
+        $middleRes = $user->sendOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
-            ->latest()
-            ->simplePaginate(10);
+            ->latest();
+        $limitParams = OrderModel::calculateLimitParam($request->get('page'),$size);
+        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get();
+        $count = $middleRes->count();
+        $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
         foreach ($datas as $items){
             $items->content = str_limit($items->content,100,'...');
-        }
-        return ApiResponse::responseSuccess($datas);
+        }        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
     }
 
     /**
@@ -43,17 +47,22 @@ class OrderController extends Controller{
      * @return string
      * @throws \src\Exceptions\UnAuthorizedException
      */
-    public function getReceivedOrder(){
+    public function getReceivedOrder(Request $request){
+        $page = $request->get('page');
+        $size = $request->get('size');
         $user = UserModel::getCurUser();
-        $datas = $user->receiveOrders()
+        $middleRes = $user->receiveOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
-            ->latest()
-            ->simplePaginate(10);
+            ->latest();
+        $limitParams = OrderModel::calculateLimitParam($request->get('page'),$size);
+        $datas = $middleRes->limit($limitParams['offset'],$limitParams['size'])->get();
+        $count = $middleRes->count();
+        $pageData = OrderModel::calculatePage($count,$page,$request->fullUrl(),$size);
         foreach ($datas as $items){
             $items->content = str_limit($items->content,100,'...');
         }
-        return ApiResponse::responseSuccess($datas);
+        return ApiResponse::responseSuccess(array_merge($datas,$pageData));
     }
 
     /**

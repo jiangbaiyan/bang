@@ -77,6 +77,7 @@ class RegisterController extends Controller{
     /**
      * 用户输入姓名和身份证号信息
      * @param Request $request
+     * @return string
      * @throws OperateFailedException
      * @throws ParamValidateFailedException
      * @throws ResourceNotFoundException

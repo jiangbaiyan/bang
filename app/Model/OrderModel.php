@@ -52,16 +52,18 @@ class OrderModel extends Model
      * 获取发送者
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function sender(){
-        return $this->belongsTo(UserModel::class,'sender_id','id');
+    public function sender()
+    {
+        return $this->belongsTo(UserModel::class, 'sender_id', 'id');
     }
 
     /**
      * 获取接单者
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function receiver(){
-        return $this->belongsTo(UserModel::class,'receiver_id','id');
+    public function receiver()
+    {
+        return $this->belongsTo(UserModel::class, 'receiver_id', 'id');
     }
 
     /**
@@ -71,14 +73,15 @@ class OrderModel extends Model
      * @return OrderModel|mixed
      * @throws ResourceNotFoundException
      */
-    public static function getOrderById($id,$select = []){
+    public static function getOrderById($id, $select = [])
+    {
         $orderModel = new OrderModel();
-        if (!empty($select)){
+        if (!empty($select)) {
             $order = $orderModel->select($select)->find($id);
-        } else{
+        } else {
             $order = $orderModel->find($id);
         }
-        if (!$order){
+        if (!$order) {
             throw new ResourceNotFoundException(ConstHelper::ORDER);
         }
         return $order;
@@ -92,7 +95,8 @@ class OrderModel extends Model
      * @param $lat2
      * @return float|int
      */
-    public static function getDistance($lng1, $lat1, $lng2, $lat2) {
+    public static function getDistance($lng1, $lat1, $lng2, $lat2)
+    {
         $radLat1 = deg2rad($lat1); //deg2rad()函数将角度转换为弧度
         $radLat2 = deg2rad($lat2);
         $radLng1 = deg2rad($lng1);
@@ -101,5 +105,71 @@ class OrderModel extends Model
         $b = $radLng1 - $radLng2;
         $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6378.137;
         return $s;
+    }
+
+    /**
+     * 获取limit参数
+     * @param $page
+     * @param int $pageSize
+     * @return array
+     */
+    public static function calculateLimitParam($page,$pageSize = 10){
+        return [
+            'offset' => ($page - 1) * $pageSize + 1,
+            'size' => $pageSize
+        ];
+    }
+
+    /**
+     * 订单分页结果URL
+     * @param $resCount
+     * @param $currentPage
+     * @param $baseUrl
+     * @param int $pageSize
+     * @return array
+     */
+    public static function calculatePage($resCount, $currentPage, $baseUrl, $pageSize = 10)
+    {
+        if ($resCount <= 0 || $pageSize <= 0 || $currentPage < 1) {
+            return [];
+        }
+        $totalPage = intval(ceil($resCount / $pageSize));
+        if ($totalPage <= 0) {
+            $totalPage = 1;
+        }
+        if ($_SERVER['QUERY_STRING'] == ''){
+            $firstPageUrl = $baseUrl . '?page=1';
+            $lastPageUrl = $baseUrl . '?page=' . $totalPage;
+            if ($currentPage == $totalPage){
+                $nextPageUrl = null;
+            } else{
+                $nextPageUrl = $baseUrl . '?page='.($currentPage + 1);
+            }
+            if ($currentPage == 1){
+                $prevPageUrl = null;
+            } else{
+                $prevPageUrl = $baseUrl . '?page=' . ($currentPage - 1);
+            }
+        } else{
+            $firstPageUrl = $baseUrl . '&page=1';
+            $lastPageUrl = $baseUrl . '&page=' . $totalPage;
+            if ($currentPage == $totalPage){
+                $nextPageUrl = null;
+            } else{
+                $nextPageUrl = $baseUrl . '&page='.($currentPage + 1);
+            }
+            if ($currentPage == 1){
+                $prevPageUrl = null;
+            } else{
+                $prevPageUrl = $baseUrl . '&page=' . ($currentPage - 1);
+            }
+        }
+        return [
+            'firstPageUrl' => $firstPageUrl,
+            'lastPageUrl' => $lastPageUrl,
+            'currentPage' => $currentPage,
+            'nextPageUrl' => $nextPageUrl,
+            'prevPageUrl' => $prevPageUrl
+        ];
     }
 }

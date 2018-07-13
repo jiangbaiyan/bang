@@ -39,11 +39,14 @@ class HelpOthersController extends Controller{
 
 
     /**
-     * 获取所有等待服务的订单（可传递参数选择类型）
+     * 获取所有等待服务的订单(10km以内)
      * @param Request $request
      * @return string
+     * @throws ParamValidateFailedException
      */
     public function getReleasedOrdersList(Request $request){
+        $page = $request->get('page') ?? 1;
+        $size = $request->get('size') ?? 10;
         $req = $request->all();
         $validator = Validator::make($req,['longitude' => 'required','latitude' => 'required']);
         if ($validator->fails()){
@@ -58,18 +61,27 @@ class HelpOthersController extends Controller{
         if (isset($param)){
             $res = $orders->where('type',$param);
         }
-        $datas = $res->simplePaginate(10);
+        $datas = OrderModel::packLimitData($res,$page,$size,$request->fullUrl());
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
-        foreach ($datas as $item){
-            $item->content = str_limit($item->content,100,'...');
-            $distance = OrderModel::getDistance($curLng,$curLat,$item->longitude, $item->latitude);
-            if ($distance > 6){
-                unset($item);
+        $resArr = [];
+        for ($i = 0,$len = count($datas) - 5;$i<$len;$i++){
+            $orderLng = $datas[$i]['longitude'];
+            $orderLat = $datas[$i]['latitude'];
+            $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
+            $datas[$i]['distance'] = $distance . 'km';
+            if ($distance < 10){
+                $resArr[] = $datas[$i];
             }
-            $item->distance = $distance;
         }
-        return ApiResponse::responseSuccess($datas);
+        $limitArr = [
+            'firstPageUrl' => $datas['firstPageUrl'],
+            'lastPageUrl' => $datas['lastPageUrl'],
+            'currentPage' => $datas['currentPage'],
+            'nextPageUrl' => $datas['nextPageUrl'],
+            'prevPageUrl' => $datas['prevPageUrl']
+        ];
+        return ApiResponse::responseSuccess(array_merge($resArr,$limitArr));
     }
 
     /**

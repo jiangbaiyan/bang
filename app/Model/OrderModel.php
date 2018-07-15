@@ -175,7 +175,8 @@ class OrderModel extends Model
             'current_page' => $currentPage,
             'next_page_url' => $nextPageUrl,
             'prev_page_url' => $prevPageUrl,
-            'to' => $totalPage
+            'data_count' => $resCount,
+            'total_page' => $totalPage
         ];
     }
 

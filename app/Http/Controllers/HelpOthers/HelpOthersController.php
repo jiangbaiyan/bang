@@ -81,7 +81,8 @@ class HelpOthersController extends Controller{
             'current_page' => $datas['current_page'],
             'next_page_url' => $datas['next_page_url'],
             'prev_page_url' => $datas['prev_page_url'],
-            'to' => $datas['to']
+            'data_count' => $datas['data_count'],
+            'total_page' => $datas['total_page']
         ];
         return ApiResponse::responseSuccess(array_merge(['data' => $resArr],$limitArr));
     }

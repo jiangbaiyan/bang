@@ -65,23 +65,25 @@ class HelpOthersController extends Controller{
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
         $resArr = [];
-        for ($i = 0,$len = count($datas) - 5;$i<$len;$i++){
-            $orderLng = $datas[$i]['longitude'];
-            $orderLat = $datas[$i]['latitude'];
+        $realData = $datas['data'];
+        foreach ($realData as $data){
+            $orderLng = $data['longitude'];
+            $orderLat = $data['latitude'];
             $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
-            $datas[$i]['distance'] = $distance . 'km';
-            if ($distance < 10){
-                $resArr[] = $datas[$i];
+            if (intval($distance) < 10){
+                $data['distance'] = $distance;
+                $resArr[] = $data;
             }
         }
         $limitArr = [
-            'firstPageUrl' => $datas['firstPageUrl'],
-            'lastPageUrl' => $datas['lastPageUrl'],
-            'currentPage' => $datas['currentPage'],
-            'nextPageUrl' => $datas['nextPageUrl'],
-            'prevPageUrl' => $datas['prevPageUrl']
+            'first_page_url' => $datas['first_page_url'],
+            'last_page_url' => $datas['last_page_url'],
+            'current_page' => $datas['current_page'],
+            'next_page_url' => $datas['next_page_url'],
+            'prev_page_url' => $datas['prev_page_url'],
+            'to' => $datas['to']
         ];
-        return ApiResponse::responseSuccess(array_merge($resArr,$limitArr));
+        return ApiResponse::responseSuccess(array_merge(['data' => $resArr],$limitArr));
     }
 
     /**

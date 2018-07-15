@@ -6,7 +6,6 @@ use App\Helper\ConstHelper;
 use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 use src\Exceptions\ResourceNotFoundException;
 
 class OrderModel extends Model
@@ -105,16 +104,16 @@ class OrderModel extends Model
         $a = $radLat1 - $radLat2;
         $b = $radLng1 - $radLng2;
         $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6378.137;
-        return round($s,2);
+        return round($s,2) . 'km';
     }
 
     /**
-     * 获取limit参数
+     * 获取分页偏移量
      * @param $page
      * @param int $pageSize
      * @return array
      */
-    public static function calculateLimitParam($page,$pageSize = 10){
+    private static function calculateLimitParam($page,$pageSize = 10){
         if (empty($page)){
             $offset = 0;
         } else{
@@ -134,7 +133,7 @@ class OrderModel extends Model
      * @param int $pageSize
      * @return array
      */
-    public static function calculatePage($resCount, $currentPage, $baseUrl, $pageSize = 10)
+    private static function calculatePage($resCount, $currentPage, $baseUrl, $pageSize = 10)
     {
         if ($resCount <= 0 || $pageSize <= 0 || $currentPage < 1) {
             return [];
@@ -171,11 +170,12 @@ class OrderModel extends Model
             }
         }
         return [
-            'firstPageUrl' => $firstPageUrl,
-            'lastPageUrl' => $lastPageUrl,
-            'currentPage' => $currentPage,
-            'nextPageUrl' => $nextPageUrl,
-            'prevPageUrl' => $prevPageUrl
+            'first_page_url' => $firstPageUrl,
+            'last_page_url' => $lastPageUrl,
+            'current_page' => $currentPage,
+            'next_page_url' => $nextPageUrl,
+            'prev_page_url' => $prevPageUrl,
+            'to' => $totalPage
         ];
     }
 
@@ -198,6 +198,6 @@ class OrderModel extends Model
         foreach ($datas as $items){
             $items['content'] = str_limit($items['content'],100,'...');
         }
-        return array_merge($datas,$limitRes);
+        return array_merge(['data' => $datas],$limitRes);
     }
 }

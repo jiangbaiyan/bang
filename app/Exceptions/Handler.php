@@ -54,7 +54,7 @@ class Handler extends ExceptionHandler
             'errCode' => $exception->getCode(),
             'errMsg' => $exception->getMessage(),
             'line' => $exception->getLine(),
-            'request' => $request->fullUrl(),
+            'url' => $request->fullUrl(),
             'params' => $request->all()
         ];
         if ($exception->getMessage() == 'Unauthenticated.'){

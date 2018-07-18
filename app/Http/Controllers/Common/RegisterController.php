@@ -75,7 +75,7 @@ class RegisterController extends Controller{
 
 
     /**
-     * 用户输入姓名和身份证号信息
+     * 拉取用户微信信息
      * @param Request $request
      * @return string
      * @throws OperateFailedException

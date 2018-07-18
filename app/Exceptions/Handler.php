@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\UnAuthorizedException;
 
@@ -49,9 +50,17 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        $errArr = [
+            'errCode' => $exception->getCode(),
+            'errMsg' => $exception->getMessage(),
+            'line' => $exception->getLine(),
+            'request' => $request->fullUrl(),
+            'params' => $request->all()
+        ];
         if ($exception->getMessage() == 'Unauthenticated.'){
             throw new UnAuthorizedException();
         }
+        Log::error(json_encode($errArr));
         return ApiResponse::response($exception->getCode(),$exception->getMessage());
     }
 }

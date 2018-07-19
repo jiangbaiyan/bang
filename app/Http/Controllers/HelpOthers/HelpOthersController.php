@@ -62,6 +62,9 @@ class HelpOthersController extends Controller{
             $res = $res->where('type',$param);
         }
         $datas = OrderModel::packLimitData($res,$page,$size,$request->fullUrl());
+        if (empty($datas)){
+            return ApiResponse::responseSuccess();
+        }
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
         $resArr = [];

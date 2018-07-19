@@ -191,10 +191,13 @@ class OrderModel extends Model
      */
     public static function packLimitData($midData,$curPage,$pageSize,$baseUrl){
         $limitParams = self::calculateLimitParam($curPage);
+        $count = $midData->count();
+        if ($count == 0){
+            return [];
+        }
         $offset = $limitParams['offset'];
         $limit = $limitParams['size'];
         $datas = $midData->offset($offset)->limit($limit)->get()->toArray();
-        $count = $midData->count();
         $limitRes = self::calculatePage($count,$curPage,$baseUrl,$pageSize);
         foreach ($datas as $items){
             $items['content'] = str_limit($items['content'],100,'...');

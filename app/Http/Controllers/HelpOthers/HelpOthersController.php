@@ -54,12 +54,12 @@ class HelpOthersController extends Controller{
         }
         $param = $request->input('type');
         $orderModel = new OrderModel();
-        $orders = $orderModel
+        $res = $orderModel
             ->select('id','title','content','begin_time','end_time','price','longitude','latitude')
             ->where('status',OrderModel::statusReleased)
             ->latest();
         if (isset($param)){
-            $res = $orders->where('type',$param);
+            $res = $res->where('type',$param);
         }
         $datas = OrderModel::packLimitData($res,$page,$size,$request->fullUrl());
         $curLng = $req['longitude'];

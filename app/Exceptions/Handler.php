@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Helper\Log;
+use src\Logger\Logger;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use src\ApiHelper\ApiResponse;
@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        parent::report($exception);
+        //parent::report($exception);
     }
 
     /**
@@ -51,8 +51,8 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         $errArr = [
-            'errCode' => $exception->getCode(),
-            'errMsg' => $exception->getMessage(),
+            'status' => $exception->getCode(),
+            'msg' => $exception->getMessage(),
             'fileName' => $exception->getFile(),
             'line' => $exception->getLine(),
             'url' => $request->fullUrl(),
@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
         if ($exception->getMessage() == 'Unauthenticated.'){
             throw new UnAuthorizedException();
         }
-        Log::fatal($errArr);
+        Logger::fatal($errArr);
         return ApiResponse::response($exception->getCode(),$exception->getMessage());
     }
 }

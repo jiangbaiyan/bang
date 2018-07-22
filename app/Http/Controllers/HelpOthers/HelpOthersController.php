@@ -67,16 +67,12 @@ class HelpOthersController extends Controller{
         }
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
-        $resArr = [];
         $realData = $datas['data'];
         foreach ($realData as $data){
             $orderLng = $data['longitude'];
             $orderLat = $data['latitude'];
             $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
-            if (intval($distance) < 10){
-                $data['distance'] = $distance;
-                $resArr[] = $data;
-            }
+            $realData['distance'] = $distance;
         }
         $limitArr = [
             'first_page_url' => $datas['first_page_url'],
@@ -87,7 +83,7 @@ class HelpOthersController extends Controller{
             'data_count' => $datas['data_count'],
             'total_page' => $datas['total_page']
         ];
-        return ApiResponse::responseSuccess(array_merge(['data' => $resArr],$limitArr));
+        return ApiResponse::responseSuccess(array_merge(['data' => $realData],$limitArr));
     }
 
     /**

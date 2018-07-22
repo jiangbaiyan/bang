@@ -68,13 +68,13 @@ class HelpOthersController extends Controller{
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
         $realData = $datas['data'];
-        foreach ($realData as $data){
+        foreach ($realData as &$data){
             $orderLng = $data['longitude'];
             $orderLat = $data['latitude'];
             $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
             $data['distance'] = $distance;
         }
-        dd($realData);
+        array_multisort(array_column($realData,'distance'),SORT_ASC,SORT_NUMERIC,$realData);
         $limitArr = [
             'first_page_url' => $datas['first_page_url'],
             'last_page_url' => $datas['last_page_url'],

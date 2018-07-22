@@ -72,8 +72,9 @@ class HelpOthersController extends Controller{
             $orderLng = $data['longitude'];
             $orderLat = $data['latitude'];
             $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
-            $realData['distance'] = $distance;
+            $data['distance'] = $distance;
         }
+        dd($realData);
         $limitArr = [
             'first_page_url' => $datas['first_page_url'],
             'last_page_url' => $datas['last_page_url'],

@@ -54,9 +54,12 @@ class HelpOthersController extends Controller{
         }
         $param = $request->input('type');
         $orderModel = new OrderModel();
+        $now = date('Y-m-d H:i:s');
         $res = $orderModel
             ->select('id','title','content','begin_time','end_time','price','longitude','latitude')
             ->where('status',OrderModel::statusReleased)
+            ->where('begin_time','<',$now)
+            ->where('end_time','>',$now)
             ->latest();
         if (isset($param)){
             $res = $res->where('type',$param);

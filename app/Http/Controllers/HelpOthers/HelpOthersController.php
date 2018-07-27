@@ -54,9 +54,12 @@ class HelpOthersController extends Controller{
         }
         $param = $request->input('type');
         $orderModel = new OrderModel();
+        $now = date('Y-m-d H:i:s');
         $res = $orderModel
             ->select('id','title','content','price','longitude','latitude','created_at')
             ->where('status',OrderModel::statusReleased)
+            ->where('begin_time','<',$now)
+            ->where('end_time','>',$now)
             ->latest();
         if (isset($param)){
             $res = $res->where('type',$param);
@@ -67,17 +70,14 @@ class HelpOthersController extends Controller{
         }
         $curLng = $req['longitude'];
         $curLat = $req['latitude'];
-        $resArr = [];
         $realData = $datas['data'];
-        foreach ($realData as $data){
+        foreach ($realData as &$data){
             $orderLng = $data['longitude'];
             $orderLat = $data['latitude'];
             $distance = OrderModel::getDistance($curLng,$curLat,$orderLng, $orderLat);
-            if (intval($distance) < 10){
-                $data['distance'] = $distance;
-                $resArr[] = $data;
-            }
+            $data['distance'] = $distance;
         }
+        array_multisort(array_column($realData,'distance'),SORT_ASC,SORT_NUMERIC,$realData);
         $limitArr = [
             'first_page_url' => $datas['first_page_url'],
             'last_page_url' => $datas['last_page_url'],
@@ -87,7 +87,7 @@ class HelpOthersController extends Controller{
             'data_count' => $datas['data_count'],
             'total_page' => $datas['total_page']
         ];
-        return ApiResponse::responseSuccess(array_merge(['data' => $resArr],$limitArr));
+        return ApiResponse::responseSuccess(array_merge(['data' => $realData],$limitArr));
     }
 
     /**

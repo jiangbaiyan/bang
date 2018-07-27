@@ -55,7 +55,7 @@ class HelpOthersController extends Controller{
         $param = $request->input('type');
         $orderModel = new OrderModel();
         $res = $orderModel
-            ->select('id','title','content','begin_time','end_time','price','longitude','latitude')
+            ->select('id','title','content','price','longitude','latitude','created_at')
             ->where('status',OrderModel::statusReleased)
             ->latest();
         if (isset($param)){

@@ -15,19 +15,22 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('openid',150)->nullable()->comment('微信openid');
-            $table->string('alipay_account',100)->nullable()->comment('支付宝账户');
-            $table->string('phone',20)->nullable()->comment('手机号');
-            $table->string('password')->nullable()->comment('密码');
-            $table->string('name',20)->nullable()->comment('姓名');
-            $table->unsignedTinyInteger('age')->nullable()->comment('年龄');
-            $table->string('sex',2)->nullable()->comment('性别');
-            $table->integer('point')->nullable()->comment('积分');
-            $table->string('province',50)->nullable()->comment('省份');
-            $table->string('city',50)->nullable()->comment('城市');
-            $table->string('avatar',500)->nullable()->comment('头像url');
+            $table->string('openid',32)->default('')->comment('微信openid');
+            $table->string('alipay_account',20)->default('')->comment('支付宝账户');
+            $table->string('phone',11)->default('')->comment('手机号');
+            $table->string('password')->default('')->comment('密码');
+            $table->string('name',20)->default('')->comment('姓名');
+            $table->unsignedTinyInteger('age')->default('0')->comment('年龄');
+            $table->string('sex',2)->default('value')->comment('性别');
+            $table->string('uid',15)->default('')->comment('学号');
+            $table->string('school',50)->default('')->comment('学校');
+            $table->string('unit',50)->default('')->comment('学院');
+            $table->unsignedsmallInteger('grade',20)->default('0')->comment('年级');
+            $table->unsignedInteger('point')->default('0')->comment('积分');
+            $table->string('province',50)->default('')->comment('省份');
+            $table->string('city',50)->default('')->comment('城市');
+            $table->string('avatar')->default('')->comment('头像url');
             $table->unique('openid');
-            $table->unique('phone');
             $table->timestamps();
         });
     }

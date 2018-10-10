@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Support\Facades\Auth;
 use src\Logger\Logger;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -57,11 +58,17 @@ class Handler extends ExceptionHandler
             'line' => $exception->getLine(),
             'url' => $request->fullUrl(),
             'params' => $request->all(),
+            'ip' => $request->ip(),
+            'user' => Auth::user()
         ];
-        if ($exception->getMessage() == 'Unauthenticated.'){
-            throw new UnAuthorizedException();
+        if (!empty($exception->getMessage())){
+            Logger::fatal(json_encode($errArr));
+        }else{
+            if ($exception->getMessage() == 'Unauthenticated.'){
+                throw new UnAuthorizedException();
+            }
+            exit;
         }
-        Logger::fatal($errArr);
         return ApiResponse::response($exception->getCode(),$exception->getMessage());
     }
 }

@@ -19,6 +19,9 @@ Route::group(['prefix' => 'v1'],function (){
 
          //手机验证码登录
          Route::post('loginByCode','Common\LoginController@loginByCode');
+
+         //获取学校信息
+         Route::get('hduLogin','Common\SchoolTeachSystemController@HDU');
      });
 
      Route::group(['middleware' => 'auth:api'],function (){

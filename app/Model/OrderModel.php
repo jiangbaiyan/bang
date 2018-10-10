@@ -22,31 +22,31 @@ class OrderModel extends Model
      * 订单状态
      */
     const
-        statusNotReleased = 0,//草稿(暂时用不到)
-        statusReleased = 1,//已发布
-        statusRunning = 2,//正在服务
-        statusWaitingComment = 3,//服务完成等待评价
-        statusFinished = 4,//评价完成
-        statusCanceled = 5;//订单取消
+        STATUS_NOT_RELEASED = 0,//草稿(暂时用不到)
+        STATUS_RELEASED = 1,//已发布
+        STATUS_RUNNING = 2,//正在服务
+        STATUS_WAITING_COMMENT = 3,//服务完成等待评价
+        STATUS_FINISHED = 4,//评价完成
+        STATUS_CANCELED = 5;//订单取消
 
 
     /**
      * 订单类别
      */
     const
-        typeRunning = 0,//跑腿
-        typeAsking = 1,//悬赏提问
-        typeLearning = 2,//学习辅导
-        typeTechnique = 3,//技术服务
-        typeDailyLife = 4,//生活服务
-        typeOthers = 5;//其他
+        TYPE_RUN = 0,//跑腿
+        TYPE_ASK = 1,//悬赏提问
+        TYPE_STUDY = 2,//学习辅导
+        TYPE_TECH = 3,//技术服务
+        TYPE_DAILY = 4,//生活服务
+        TYPE_OTHER = 5;//其他
 
     /**
      * 奖励积分数量
      */
     const
-        awardSenderPoint = 1,
-        awardReceiverPoint = 5;
+        AWARD_SENDER = 1,
+        AWARD_RECEIVER = 5;
 
     /**
      * 获取发送者

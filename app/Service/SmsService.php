@@ -7,11 +7,11 @@
  */
 namespace App\Service;
 
-use App\Helper\ConstHelper;
 use Flc\Dysms\Client;
 use Flc\Dysms\Request\SendSms;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redis;
+use src\ApiHelper\ApiResponse;
+use src\Logger\Logger;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ResourceNotFoundException;
 
@@ -23,6 +23,8 @@ use src\Exceptions\ResourceNotFoundException;
  */
 class SmsService{
 
+    const REDIS_SMS_VERIFY = 'bang_sms_verify_%s';
+
     //阿里云短信配置
     private static $config = [
         'accessKeyId'    => 'LTAIFUVgskph3h00',
@@ -32,6 +34,7 @@ class SmsService{
     /**
      * 获取验证码
      * @param $phone
+     * @return string
      * @throws OperateFailedException
      */
     public static function getCode($phone){
@@ -42,14 +45,22 @@ class SmsService{
         $sendSms->setTemplateCode('SMS_126460515');
         $code = rand(1000, 9999);
         $sendSms->setTemplateParam(compact('code'));
-        $res = $client->execute($sendSms);
-        $res = json_decode(json_encode($res),true);
-        if ($res['Code'] != 'OK'){
-            \Log::error($res['Message']);
-            throw new OperateFailedException(ConstHelper::SMS_ERROR);
+        try{
+            $res = $client->execute($sendSms);
+            $res = json_decode(json_encode($res),true);
+            if ($res['Code'] != 'OK'){
+                Logger::fatal('sms|send_sms_failed|msg:' . json_encode($res['Message']));
+                throw new OperateFailedException('短信官方接口异常,请稍后重试');
+            }
+        } catch (\Exception $e){
+            Logger::fatal('sms|send_sms_failed|msg:' . json_encode($e->getMessage()));
+            throw new OperateFailedException('短信官方接口异常,请稍后重试');
         }
         //设置Cache，为验证接口使用
-        Cache::put('code'.$phone,$code,1);
+        $key = sprintf(self::REDIS_SMS_VERIFY,$phone);
+        Redis::set($key,$code);
+        Redis::expire($key,60);
+        return ApiResponse::responseSuccess();
     }
 
     /**
@@ -60,12 +71,15 @@ class SmsService{
      * @throws ResourceNotFoundException
      */
     public static function verifyCode($phone,$frontCode){
-        $backCode = Cache::get('code'.$phone);
-        if (!$backCode){
-            throw new ResourceNotFoundException(ConstHelper::CODE);
+        $key = sprintf(self::REDIS_SMS_VERIFY,$phone);
+        if (Redis::ttl($key) <= 0){
+            Logger::notice('sms|wrong_sms_code|key:' . $key . '|frontCode:' . $frontCode);
+            throw new OperateFailedException('短信验证码已过期，请重新获取');
         }
+        $backCode = Redis::get($key);
         if ($frontCode != $backCode){
-            throw new OperateFailedException(ConstHelper::WRONG_CODE);
+            Logger::notice('sms|wrong_sms_code|key:' . $key . '|frontCode:' . $frontCode . '|backCode:' . $backCode);
+            throw new OperateFailedException('短息验证码错误，请重试');
         }
     }
 }

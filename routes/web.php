@@ -5,26 +5,12 @@ Route::group(['prefix' => 'v1'],function (){
      //登录注册模块
      Route::group(['prefix' => 'common'],function (){
 
-         //获取短信验证码
-         Route::post('getCode','Common\RegisterController@getCode');
-
-         //注册
-         Route::post('register','Common\RegisterController@registerAndVerify');
-
-         //添加身份证号信息
-         Route::post('addWxInfo','Common\RegisterController@addWxInfo');
-
-         //手机号密码登录
-         Route::post('loginByPassword','Common\LoginController@loginByPassword');
-
-         //手机验证码登录
-         Route::post('loginByCode','Common\LoginController@loginByCode');
-
          //获取学校信息
-         Route::get('hduLogin','Common\SchoolTeachSystemController@HDU');
+         Route::get('hduLogin','Common\HduLogin@casLogin');
+
      });
 
-     Route::group(['middleware' => 'auth:api'],function (){
+     Route::group(['middleware' => 'checkLogin'],function (){
 
          Route::group(['prefix' => 'user'],function (){
 

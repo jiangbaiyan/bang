@@ -3,13 +3,10 @@
 namespace App;
 
 use App\Model\OrderModel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Auth;
-use src\Exceptions\UnAuthorizedException;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class UserModel extends Authenticatable implements JWTSubject
+class UserModel extends Model
 {
     use Notifiable;
 

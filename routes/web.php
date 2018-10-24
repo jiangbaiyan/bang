@@ -6,7 +6,13 @@ Route::group(['prefix' => 'v1'],function (){
      Route::group(['prefix' => 'common'],function (){
 
          //获取学校信息
-         Route::get('hduLogin','Common\HduLogin@casLogin');
+         Route::any('casLogin','Common\HduLogin@casLogin');
+
+         //获取验证码
+         Route::get('getCode', 'Common\HduLogin@getCode');
+
+         //验证验证码正确性
+         Route::post('verify','Common\HduLogin@verify');
 
      });
 

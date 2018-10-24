@@ -12,7 +12,9 @@ use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
 use App\UserModel;
-use ComConf;
+use App\Helper\ComConf;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use src\Exceptions\OperateFailedException;
@@ -27,7 +29,7 @@ class HduLogin extends Controller {
 
     const VALIDATE_SERVER = 'http://cas.hdu.edu.cn/cas/serviceValidate';
 
-    const THIS_URL = ConstHelper::HOST . '/common/hduLogin';
+    const THIS_URL = ConstHelper::HOST . '/common/casLogin';
 
 
     /**
@@ -57,7 +59,7 @@ class HduLogin extends Controller {
      * @throws \src\Exceptions\OperateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
      */
-    public function verifySmsCode(){
+    public function verify(){
         $validator = Validator::make($req = Request::all(),[
             'phone' => 'required',
             'code' => 'required',
@@ -72,23 +74,64 @@ class HduLogin extends Controller {
     }
 
     /**
+     * 获取LT
+     * @return mixed
+     * @throws OperateFailedException
+     */
+    private function getLT(){
+        $ch = curl_init('http://cas.hdu.edu.cn/cas/login?service=' . self::THIS_URL);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        $res = curl_exec($ch);
+        preg_match('/LT-\d+-\w+/',$res,$matches);
+        curl_close($ch);
+        if (empty($matches)){
+            throw new OperateFailedException('login|get_LT_from_cas_failed|req:' . json_encode($res));
+        }
+        return $matches[0];
+    }
+
+    /**
+     * 获取cas的ticket
+     * @return mixed
+     * @throws OperateFailedException
+     */
+    private function getTicket($uid,$password){
+        $payload = [
+            'encodedService' => urlencode(self::THIS_URL),
+            'service' => self::THIS_URL,
+            'serviceName' => '',
+            'loginErrCnt' => '0',
+            'username' => '',
+            'password' => '',
+            'lt' => ''
+        ];
+        $payload['username'] = $uid;
+        $payload['password'] = md5($password);
+        $payload['lt'] = $this->getLT();
+        $payload = http_build_query($payload);
+        $ch = curl_init(self::LOGIN_SERVER);
+        curl_setopt($ch,CURLOPT_POST,1);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        $res = curl_exec($ch);
+        preg_match('/ticket=(\w+-\d+-\w+)/',$res,$matches);
+        if (empty($matches)){
+            throw new OperateFailedException('login|get_ticket_from_cas_failed|req:' . json_encode($res));
+        }
+        return $matches[1];
+    }
+
+    /**
      * 杭电CAS登录
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
+     * @throws OperateFailedException
      * @throws ParamValidateFailedException
      */
     public function casLogin(){
-        $validator = Validator::make($params = Request::all(),[
-            'phone' => 'required'
-        ]);
-        if ($validator->fails()){
-            throw new ParamValidateFailedException();
-        }
-        $phone = $params['phone'];
-        //判断是否已经登录，如果ticket为空，则未登录
         if (!empty($_REQUEST["ticket"])) {
             //获取登录后的返回信息
             try {//认证ticket
-                $validateurl = self::VALIDATE_SERVER . "?ticket=" . $_REQUEST["ticket"] . "&service=" . self::THIS_URL;
+                $validateurl = self::VALIDATE_SERVER . "?ticket=" . $_REQUEST["ticket"] .  "&service=" . self::THIS_URL;
 
                 $validateResult = file_get_contents($validateurl);
 
@@ -98,11 +141,6 @@ class HduLogin extends Controller {
                 $validateXML = simplexml_load_string($validateResult);
 
                 $nodeArr = json_decode(json_encode($validateXML),true);
-
-                if (empty($nodeArr['authenticationSuccess'])){//登录失败
-                    Logger::notice('login|get_user_info_from_hdu_api_failed|msg:' . json_encode($validateXML));
-                    die('登录失败，杭电官方系统异常，请稍后重试');
-                }
 
                 $attributes = $nodeArr['authenticationSuccess']['attributes']['attribute'];
 
@@ -119,7 +157,7 @@ class HduLogin extends Controller {
                         case 'userName'://学号/工号
                             $data['uid'] = $attribute['@attributes']['value'];
                             break;
-                        case 'user_sex'://性别 1-男 其他-女
+                        case 'user_sex'://性别 1-男 2-女
                             $data['sex'] = $attribute['@attributes']['value'];
                             break;
                         case 'unit_name'://学院
@@ -131,13 +169,13 @@ class HduLogin extends Controller {
                     }
                 }
 
-                $data['phone'] = $phone;
+                if (!empty($data['class'])){
+                    $data['grade'] = '20' . substr($data['class'],0,2);
+                }
+                unset($data['idType']);
+                $data['school'] = '杭州电子科技大学';
 
-                $res = $this->getLatestUser($data);
-
-                $token = $this->setToken($res);
-
-                return ApiResponse::responseSuccess(['token' => $token]);
+                return ApiResponse::responseSuccess($data);
 
             }
             catch (\Exception $e) {
@@ -146,7 +184,15 @@ class HduLogin extends Controller {
             }
         } else//没有ticket，说明没有登录，需要重定向到登录服务器
         {
-            return redirect(self::LOGIN_SERVER . "?service=" .self::THIS_URL);
+            $validator = Validator::make($params = Request::all(),[
+                'uid' => 'required',
+                'password' => 'required'
+            ]);
+            if ($validator->fails()){
+                throw new ParamValidateFailedException($validator);
+            }
+            $ticket = $this->getTicket($params['uid'],$params['password']);
+            return redirect(self::THIS_URL . '?ticket=' . $ticket);
         }
     }
 
@@ -167,7 +213,7 @@ class HduLogin extends Controller {
      * @param $data
      * @return mixed
      */
-    public function getLatestUser($data){
+    private function getLatestUser($data){
         $user = UserModel::where('uid',$data['uid'])->first();
         if (!$user){
             UserModel::create($data);

@@ -29,7 +29,7 @@ return [
     |
     | All authentication drivers have a user provider. This defines how the
     | users are actually retrieved out of your database or other storage
-    | mechanisms used by this application to persist your user'HelpOthers data.
+    | mechanisms used by this application to persist your user's data.
     |
     | Supported: "session", "token"
     |
@@ -37,24 +37,24 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'users',
         ],
 
         'api' => [
-            'driver' => 'jwt',
+            'driver' => 'token',
             'provider' => 'users',
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | UserModel Providers
+    | User Providers
     |--------------------------------------------------------------------------
     |
     | All authentication drivers have a user provider. This defines how the
     | users are actually retrieved out of your database or other storage
-    | mechanisms used by this application to persist your user'HelpOthers data.
+    | mechanisms used by this application to persist your user's data.
     |
     | If you have multiple user tables or models you may configure multiple
     | sources which represent each model / table. These sources may then
@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\UserModel::class,
+            'model' => App\User::class,
         ],
 
         // 'users' => [

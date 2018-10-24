@@ -59,14 +59,10 @@ class Handler extends ExceptionHandler
             'url' => $request->fullUrl(),
             'params' => $request->all(),
             'ip' => $request->ip(),
-            'user' => Auth::user()
         ];
         if (!empty($exception->getMessage())){
             Logger::fatal(json_encode($errArr));
         }else{
-            if ($exception->getMessage() == 'Unauthenticated.'){
-                throw new UnAuthorizedException();
-            }
             exit;
         }
         return ApiResponse::response($exception->getCode(),$exception->getMessage());

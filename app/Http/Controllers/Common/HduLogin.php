@@ -31,6 +31,8 @@ class HduLogin extends Controller {
 
     const THIS_URL = ConstHelper::HOST . '/common/casLogin';
 
+    const REDIS_TOKEN_PREFIX = 'bang_token_%s';
+
 
     /**
      * 获取验证码
@@ -55,14 +57,22 @@ class HduLogin extends Controller {
 
     /**
      * 短信验证码验证
+     * @return string
+     * @throws OperateFailedException
      * @throws ParamValidateFailedException
-     * @throws \src\Exceptions\OperateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
      */
     public function verify(){
         $validator = Validator::make($req = Request::all(),[
             'phone' => 'required',
             'code' => 'required',
+            'name' => 'required',
+            'uid' => 'required',
+            'sex' => 'required',
+            'unit' => 'required',
+            'class' => 'required',
+            'grade' => 'required',
+            'school' => 'required'
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
@@ -70,7 +80,10 @@ class HduLogin extends Controller {
         $phone = $req['phone'];
         $frontCode = $req['code'];
         SmsService::verifyCode($phone,$frontCode);
-        return ApiResponse::responseSuccess();
+        unset($req['code']);
+        $user = $this->getLatestUser($req);
+        $token = $this->setToken($user);
+        return ApiResponse::responseSuccess(['token' => $token]);
     }
 
     /**
@@ -191,7 +204,11 @@ class HduLogin extends Controller {
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
-            $ticket = $this->getTicket($params['uid'],$params['password']);
+            try{
+                $ticket = $this->getTicket($params['uid'],$params['password']);
+            } catch (\Exception $e){
+                Logger::notice('login|get_ticket_from_cas_failed|msg:' . json_encode($e->getMessage()));
+            }
             return redirect(self::THIS_URL . '?ticket=' . $ticket);
         }
     }
@@ -203,8 +220,9 @@ class HduLogin extends Controller {
      */
     private function setToken($data){
         $token = JWT::encode($data,ComConf::JWT_KEY);
-        Redis::set($data['uid'],$token);
-        Redis::expire($data['uid'],2678400);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$data['uid']);
+        Redis::set($redisKey,$token);
+        Redis::expire($redisKey,2678400);
         return $token;
     }
 

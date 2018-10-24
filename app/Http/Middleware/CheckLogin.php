@@ -12,6 +12,7 @@ use src\Logger\Logger;
 
 class CheckLogin
 {
+    const REDIS_TOKEN_PREFIX = 'bang_token_%s';
     /**
      * Handle an incoming request.
      *
@@ -33,11 +34,12 @@ class CheckLogin
             Logger::notice('auth|decode_token_failed|msg:' . $e->getMessage() . 'frontToken:'. $frontToken);
             throw new UnAuthorizedException();
         }
-        if (Redis::ttl($user->uid) <= 0) {
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$user->uid);
+        if (Redis::ttl($redisKey) <= 0) {
             Logger::notice('auth|token_expired|user:' . json_encode($user));
             throw new UnAuthorizedException();
         }
-        $token = Redis::get($user->uid);//查redis里token，比较
+        $token = Redis::get($redisKey);//查redis里token，比较
         if ($frontToken !== $token) {
             Logger::notice('auth|front_token_not_equals_redis_token|front_token:' . $frontToken . '|redis_token:' . $token);
             throw new UnAuthorizedException();

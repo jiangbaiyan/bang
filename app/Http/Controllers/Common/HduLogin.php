@@ -65,14 +65,7 @@ class HduLogin extends Controller {
     public function verify(){
         $validator = Validator::make($req = Request::all(),[
             'phone' => 'required',
-            'code' => 'required',
-            'name' => 'required',
-            'uid' => 'required',
-            'sex' => 'required',
-            'unit' => 'required',
-            'class' => 'required',
-            'grade' => 'required',
-            'school' => 'required'
+            'code' => 'required'
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
@@ -80,10 +73,7 @@ class HduLogin extends Controller {
         $phone = $req['phone'];
         $frontCode = $req['code'];
         SmsService::verifyCode($phone,$frontCode);
-        unset($req['code']);
-        $user = $this->getLatestUser($req);
-        $token = $this->setToken($user);
-        return ApiResponse::responseSuccess(['token' => $token]);
+        return ApiResponse::responseSuccess();
     }
 
     /**
@@ -105,6 +95,8 @@ class HduLogin extends Controller {
 
     /**
      * 获取cas的ticket
+     * @param $uid
+     * @param $password
      * @return mixed
      * @throws OperateFailedException
      */
@@ -137,8 +129,8 @@ class HduLogin extends Controller {
     /**
      * 杭电CAS登录
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
-     * @throws OperateFailedException
      * @throws ParamValidateFailedException
+     * @throws OperateFailedException
      */
     public function casLogin(){
         if (!empty($_REQUEST["ticket"])) {
@@ -187,29 +179,34 @@ class HduLogin extends Controller {
                 }
                 unset($data['idType']);
                 $data['school'] = '杭州电子科技大学';
+                $data['phone'] = Request::get('phone');
+                $user = $this->getLatestUser($data);
+                $token = $this->setToken($user);
 
-                return ApiResponse::responseSuccess($data);
+                return ApiResponse::responseSuccess(['token' => $token]);
 
             }
             catch (\Exception $e) {
                 Logger::notice('login|get_user_info_from_hdu_api_failed|msg:' . json_encode($e->getMessage()));
-                die('杭电官方系统异常，请稍后再试');
+                throw new OperateFailedException('杭电官方系统异常，请稍后再试');
             }
         } else//没有ticket，说明没有登录，需要重定向到登录服务器
         {
             $validator = Validator::make($params = Request::all(),[
                 'uid' => 'required',
-                'password' => 'required'
+                'password' => 'required',
+                'phone' => 'required'
             ]);
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
             try{
                 $ticket = $this->getTicket($params['uid'],$params['password']);
+                return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone']);
             } catch (\Exception $e){
                 Logger::notice('login|get_ticket_from_cas_failed|msg:' . json_encode($e->getMessage()));
+                throw new OperateFailedException('杭电官方系统异常，请稍后再试');
             }
-            return redirect(self::THIS_URL . '?ticket=' . $ticket);
         }
     }
 

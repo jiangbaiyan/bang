@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use ComConf;
+use App\Helper\ComConf;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;

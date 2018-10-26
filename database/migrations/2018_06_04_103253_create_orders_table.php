@@ -29,7 +29,6 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('receiver_id')->default('0')->comment('接单者id');
             $table->index('sender_id');
             $table->index('receiver_id');
-            $table->unique('uuid');
             $table->softDeletes();
             $table->timestamps();
         });

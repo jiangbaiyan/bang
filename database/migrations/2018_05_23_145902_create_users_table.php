@@ -26,8 +26,8 @@ class CreateUsersTable extends Migration
             $table->unsignedInteger('class')->default('0')->comment('班级');
             $table->integer('point')->default('0')->comment('积分');
             $table->string('avatar')->default('')->comment('头像url');
-            $table->unique('openid');
             $table->timestamps();
+            $table->index('uid');
         });
     }
 

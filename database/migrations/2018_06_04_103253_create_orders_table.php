@@ -27,6 +27,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedDecimal('latitude',9,6)->default('0')->comment('纬度');
             $table->unsignedInteger('sender_id')->default('0')->comment('发单者id');
             $table->unsignedInteger('receiver_id')->default('0')->comment('接单者id');
+            $table->index('sender_id');
+            $table->index('receiver_id');
+            $table->unique('uuid');
             $table->softDeletes();
             $table->timestamps();
         });

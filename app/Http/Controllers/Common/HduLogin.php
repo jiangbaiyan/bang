@@ -183,7 +183,7 @@ class HduLogin extends Controller {
                 $user = $this->getLatestUser($data);
                 $token = $this->setToken($user);
 
-                return ApiResponse::responseSuccess(['token' => $token]);
+                return ApiResponse::responseSuccess(array_merge(['token' => $token],$data));
 
             }
             catch (\Exception $e) {

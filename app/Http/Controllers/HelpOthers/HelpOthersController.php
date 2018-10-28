@@ -57,7 +57,7 @@ class HelpOthersController extends Controller{
         $now = date('Y-m-d H:i:s');
         $res = $orderModel
             ->select('id','title','content','price','longitude','latitude','created_at')
-            ->where('status',OrderModel::statusReleased)
+            ->where('status',OrderModel::STATUS_RELEASED)
             ->where('begin_time','<',$now)
             ->where('end_time','>',$now)
             ->latest();
@@ -111,19 +111,18 @@ class HelpOthersController extends Controller{
      * @throws OperateFailedException
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function receiveOrder(Request $request){
         $req = $request->all();
         $order = $this->verifyIdAndReturnOrder($req);
-        if ($order->status != OrderModel::statusReleased){
+        if ($order->status != OrderModel::STATUS_RELEASED){
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
-        $userId = UserModel::getCurUser(true);
+        $userId = $req['user']->id;
         if ($order->sender_id == $userId){
             throw new OperateFailedException(ConstHelper::WRONG_RECEIVER);
         }
-        $order->status = OrderModel::statusRunning;
+        $order->status = OrderModel::STATUS_RUNNING;
         $order->receiver_id = $userId;
         $order->save();
         return ApiResponse::responseSuccess();

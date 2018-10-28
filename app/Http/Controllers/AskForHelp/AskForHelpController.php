@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
+use src\Logger\Logger;
 
 class AskForHelpController extends Controller{
 
@@ -26,8 +27,6 @@ class AskForHelpController extends Controller{
      * @param Request $request
      * @return string
      * @throws ParamValidateFailedException
-     * @throws \src\Exceptions\UnAuthorizedException
-     * @throws OperateFailedException
      */
     public function releaseOrder(Request $request){
         $req = $request->all();
@@ -50,15 +49,13 @@ class AskForHelpController extends Controller{
         $orderModel->begin_time = $req['beginTime'];
         $orderModel->end_time = $req['endTime'];
         $orderModel->type = $req['type'];
-        $orderModel->status = OrderModel::statusReleased;
+        $orderModel->status = OrderModel::STATUS_RELEASED;
         $orderModel->price = $req['price'];
-        $orderModel->sender_id = UserModel::getCurUser(true);
+        $orderModel->sender_id = $req['user']->id;
         $orderModel->uuid = time() . mt_rand(0,100000);
         $orderModel->longitude = $req['longitude'];
         $orderModel->latitude = $req['latitude'];
-        if (!$orderModel->save()){
-            throw new OperateFailedException();
-        };
+        $orderModel->save();
         return ApiResponse::responseSuccess(['id' => $orderModel->id]);
     }
 
@@ -78,14 +75,16 @@ class AskForHelpController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        if ($order->status != OrderModel::statusReleased){
+        if ($order->status != OrderModel::STATUS_RELEASED){
+            Logger::notice('ask|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $order->delete();
         if (!$order->trashed()){
-            throw new OperateFailedException();
+            Logger::notice('ask|delete_order_failed|order:' . json_encode($order));
+            throw new OperateFailedException('删除失败，请稍后重试');
         }
-        $order->status = OrderModel::statusCanceled;
+        $order->status = OrderModel::STATUS_CANCELED;
         $order->save();
         //TODO:微信退款逻辑
         return ApiResponse::responseSuccess();

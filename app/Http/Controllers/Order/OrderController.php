@@ -11,24 +11,24 @@ namespace App\Http\Controllers\Order;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
-use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
+use src\Logger\Logger;
 
 class OrderController extends Controller{
 
     /**
      * 获取已发布的订单
+     * @param Request $request
      * @return string
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function getSentOrder(Request $request){
         $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
-        $user = UserModel::getCurUser();
+        $user = $request->get('user');
         $middleRes = $user->sendOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
@@ -39,13 +39,13 @@ class OrderController extends Controller{
 
     /**
      * 获取已接的单
+     * @param Request $request
      * @return string
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function getReceivedOrder(Request $request){
         $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
-        $user = UserModel::getCurUser();
+        $user = $request->get('user');
         $middleRes = $user->receiveOrders()
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
@@ -88,13 +88,15 @@ class OrderController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        if ($order->status != OrderModel::statusWaitingComment){
+        if ($order->status != OrderModel::STATUS_WAITING_COMMENT){
+            Logger::notice('order|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         if (!isset($order->receiver)){
+            Logger::notice('order|no_order_receiver|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::USER);
         }
-        $order->status = OrderModel::statusFinished;
+        $order->status = OrderModel::STATUS_FINISHED;
         $order->save();
         $receiver = $order->receiver;
         $receiver->point += $req['star'];
@@ -102,11 +104,4 @@ class OrderController extends Controller{
         return ApiResponse::responseSuccess();
     }
 
-    /**
-     * 永久删除订单
-     * @param Request $request
-     */
-    public function deleteOrder(Request $request){
-
-    }
 }

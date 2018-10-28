@@ -110,8 +110,10 @@ class HduLogin extends Controller {
             'password' => '',
             'lt' => ''
         ];
-        $payload['username'] = $uid;
-        $payload['password'] = md5($password);
+        $password = trim(str_replace(PHP_EOL,'',$password));
+        $uid = trim(str_replace(PHP_EOL,'',$uid));
+        $payload['username'] = trim($uid);
+        $payload['password'] = md5(trim($password));
         $payload['lt'] = $this->getLT();
         $payload = http_build_query($payload);
         $ch = curl_init(self::LOGIN_SERVER);
@@ -119,6 +121,10 @@ class HduLogin extends Controller {
         curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
         $res = curl_exec($ch);
+        if (strpos($res,'错误的用户名或密码')){
+            Logger::notice('login|wrong_password|res:' . json_encode($res));
+            throw new OperateFailedException('用户名或密码错误，请重新输入');
+        }
         preg_match('/ticket=(\w+-\d+-\w+)/',$res,$matches);
         if (empty($matches)){
             throw new OperateFailedException('login|get_ticket_from_cas_failed|req:' . json_encode($res));
@@ -200,13 +206,8 @@ class HduLogin extends Controller {
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
-            try{
-                $ticket = $this->getTicket($params['uid'],$params['password']);
-                return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone']);
-            } catch (\Exception $e){
-                Logger::notice('login|get_ticket_from_cas_failed|msg:' . json_encode($e->getMessage()));
-                throw new OperateFailedException('杭电官方系统异常，请稍后再试');
-            }
+            $ticket = $this->getTicket($params['uid'],$params['password']);
+            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone']);
         }
     }
 

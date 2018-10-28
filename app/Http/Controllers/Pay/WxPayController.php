@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
+use src\Logger\Logger;
 
 class WxPayController extends Controller{
 
@@ -27,7 +28,6 @@ class WxPayController extends Controller{
      * @return string
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function unifyPay(Request $request){
         $req = $request->all();
@@ -36,7 +36,7 @@ class WxPayController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        $user = UserModel::getCurUser();
+        $user = $req['user'];
         $params = [
             'out_trade_no' => $order->uuid,
             'total_fee' => ($order->price) * 100, // **单位：分**
@@ -51,12 +51,17 @@ class WxPayController extends Controller{
     /**
      * 微信支付返回结果通知
      * @return string
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     * @throws OperateFailedException
      */
     public function wechatNotify(){
-        $app = WxService::getWxPayApp();
-        $app->verify();
-        return $app->success();
+        try{
+            $app = WxService::getWxPayApp();
+            $app->verify();
+            return $app->success();
+        } catch (\Exception $e){
+            Logger::notice('wxpay|notify_failed|msg:' . json_encode($e->getMessage()));
+            throw new OperateFailedException($e->getMessage());
+        }
     }
 
 
@@ -75,7 +80,8 @@ class WxPayController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        if ($order->status != OrderModel::statusWaitingComment){
+        if ($order->status != OrderModel::STATUS_WAITING_COMMENT){
+            Logger::notice('wxpay|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $params = [

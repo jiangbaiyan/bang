@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
+use src\Logger\Logger;
 
 class AliPayController extends Controller{
 
@@ -26,7 +27,6 @@ class AliPayController extends Controller{
      * @throws OperateFailedException
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function aliTransfer(Request $request){
         $req = $request->all();
@@ -35,7 +35,8 @@ class AliPayController extends Controller{
             throw new ParamValidateFailedException($validator);
         }
         $order = OrderModel::getOrderById($req['id']);
-        if ($order->status != OrderModel::statusWaitingComment){
+        if ($order->status != OrderModel::STATUS_WAITING_COMMENT){
+            Logger::notice('alipay|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $params = [
@@ -52,11 +53,16 @@ class AliPayController extends Controller{
     /**
      * 支付宝返回结果通知
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     * @throws OperateFailedException
      */
     public function aliNotify(){
-        $app = AliService::getAliPayApp();
-        $app->verify();
-        return $app->success();
+        try{
+            $app = AliService::getAliPayApp();
+            $app->verify();
+            return $app->success();
+        } catch (\Exception $e){
+            Logger::notice('alipay|notify_failed|msg:' . json_encode($e->getMessage()));
+            throw new OperateFailedException($e->getMessage());
+        }
     }
 }

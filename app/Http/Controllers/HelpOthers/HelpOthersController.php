@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
 use src\Exceptions\OperateFailedException;
 use src\Exceptions\ParamValidateFailedException;
+use src\Logger\Logger;
 
 class HelpOthersController extends Controller{
 
@@ -99,9 +100,9 @@ class HelpOthersController extends Controller{
      */
     public function getReleasedOrderDetail(Request $request){
         $req = $request->all();
-        $order = $this->verifyIdAndReturnOrder($req);
-        $order->sender;
-        return ApiResponse::responseSuccess($order);
+        $order = $this->verifyIdAndReturnOrder($req)->toArray();
+        $sender = UserModel::getUserById($order['sender_id'])->toArray();
+        return ApiResponse::responseSuccess(array_merge($order,['sender' => $sender]));
     }
 
     /**
@@ -116,10 +117,12 @@ class HelpOthersController extends Controller{
         $req = $request->all();
         $order = $this->verifyIdAndReturnOrder($req);
         if ($order->status != OrderModel::STATUS_RELEASED){
+            Logger::notice('ho|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
         $userId = $req['user']->id;
         if ($order->sender_id == $userId){
+            Logger::notice('ho|can_not_receive_own_order|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_RECEIVER);
         }
         $order->status = OrderModel::STATUS_RUNNING;
@@ -135,25 +138,26 @@ class HelpOthersController extends Controller{
      * @throws OperateFailedException
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
-     * @throws \src\Exceptions\UnAuthorizedException
      */
     public function finishOrder(Request $request){
         $req = $request->all();
         $order = $this->verifyIdAndReturnOrder($req);
-        if ($order->status != OrderModel::statusRunning){
+        if ($order->status != OrderModel::STATUS_RUNNING){
+            Logger::notice('ho|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
-        $userId = UserModel::getCurUser(true);
+        $userId = $req['user']->id;
         if ($order->sender_id != $userId){
+            Logger::notice('ho|sender_id_not_eq_uid|msg:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_FINISHER);
         }
-        $sender = $order->sender;
-        $sender->point += OrderModel::awardSenderPoint;
+        $sender = UserModel::getUserById($order->sender_id);
+        $sender->point += OrderModel::AWARD_SENDER;
         $sender->save();
-        $receiver = $order->receiver;
-        $receiver->point += OrderModel::awardReceiverPoint;
+        $receiver = UserModel::getUserById($order->receiver_id);
+        $receiver->point += OrderModel::AWARD_RECEIVER;
         $receiver->save();
-        $order->status = OrderModel::statusWaitingComment;
+        $order->status = OrderModel::STATUS_WAITING_COMMENT;
         $order->save();
         return ApiResponse::responseSuccess();
     }

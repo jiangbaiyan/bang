@@ -14,6 +14,7 @@ Route::group(['prefix' => 'v1'],function (){
          //验证验证码正确性
          Route::post('verify','Common\HduLogin@verify');
 
+
      });
 
      Route::group(['middleware' => 'checkLogin'],function (){
@@ -21,14 +22,12 @@ Route::group(['prefix' => 'v1'],function (){
          Route::group(['prefix' => 'user'],function (){
 
              //获取个人信息
-             Route::get('getUserInfo','Common\UserController@getUserInfo');
+             Route::get('getUserInfo','Common\HduLogin@getUserInfo');
 
-             //更新个人信息
-             Route::post('modifyUserInfo','Common\UserController@modifyUserInfo');
+             //修改个人嘻嘻
+             Route::post('modifyUserInfo','Common\HduLogin@modifyUserInfo');
 
          });
-
-
          //求支援模块
          Route::group(['prefix' => 'askForHelp'],function (){
 

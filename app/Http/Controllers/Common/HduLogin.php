@@ -186,6 +186,8 @@ class HduLogin extends Controller {
                 unset($data['idType']);
                 $data['school'] = '杭州电子科技大学';
                 $data['phone'] = Request::get('phone');
+                $data['openid'] = Request::get('openid');
+                $data['avatar'] = Request::get('avatar');
                 $user = $this->getLatestUser($data);
                 $token = $this->setToken($user);
 
@@ -201,13 +203,15 @@ class HduLogin extends Controller {
             $validator = Validator::make($params = Request::all(),[
                 'uid' => 'required',
                 'password' => 'required',
-                'phone' => 'required'
+                'phone' => 'required',
+                'openid' => 'required',
+                'avatar' => 'required'
             ]);
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
             $ticket = $this->getTicket($params['uid'],$params['password']);
-            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone']);
+            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $params['openid'] . '&avatar=' . $params['avatar']);
         }
     }
 
@@ -239,5 +243,16 @@ class HduLogin extends Controller {
         }
         return $user;
     }
+
+    /**
+     * 获取用户信息
+     * @return string
+     */
+    public function getUserInfo(){
+        $userId = Request::all()['user']->id;
+        $user = UserModel::find($userId);
+        return ApiResponse::responseSuccess($user);
+    }
+
 }
 

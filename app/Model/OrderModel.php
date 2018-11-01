@@ -7,6 +7,7 @@ use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use src\Exceptions\ResourceNotFoundException;
+use src\Logger\Logger;
 
 class OrderModel extends Model
 {
@@ -49,24 +50,6 @@ class OrderModel extends Model
         AWARD_RECEIVER = 5;
 
     /**
-     * 获取发送者
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function sender()
-    {
-        return $this->belongsTo(UserModel::class, 'sender_id', 'id');
-    }
-
-    /**
-     * 获取接单者
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function receiver()
-    {
-        return $this->belongsTo(UserModel::class, 'receiver_id', 'id');
-    }
-
-    /**
      * 根据id查找订单模型
      * @param $id
      * @param array $select
@@ -82,7 +65,8 @@ class OrderModel extends Model
             $order = $orderModel->find($id);
         }
         if (!$order) {
-            throw new ResourceNotFoundException(ConstHelper::ORDER);
+            Logger::fatal('orderMdl|order_not_exists|orderId:' . $id);
+            throw new ResourceNotFoundException('订单不存在');
         }
         return $order;
     }

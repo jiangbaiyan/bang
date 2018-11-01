@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Order;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
+use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
@@ -28,8 +29,8 @@ class OrderController extends Controller{
     public function getSentOrder(Request $request){
         $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
-        $user = $request->get('user');
-        $middleRes = $user->sendOrders()
+        $userId = $request->get('user')->id;
+        $middleRes = OrderModel::where('sender_id',$userId)
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest();
@@ -45,8 +46,8 @@ class OrderController extends Controller{
     public function getReceivedOrder(Request $request){
         $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
-        $user = $request->get('user');
-        $middleRes = $user->receiveOrders()
+        $userId = $request->get('user')->id;
+        $middleRes = OrderModel::where('receiver_id',$userId)
             ->withTrashed()
             ->select('id','title','status','content','price','updated_at')
             ->latest();
@@ -67,10 +68,19 @@ class OrderController extends Controller{
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }
-        $order = OrderModel::getOrderById($req['id']);
-        $order->sender;
-        $order->receiver;
-        return ApiResponse::responseSuccess($order);
+        $order = OrderModel::getOrderById($req['id'])->toArray();
+        $sender = UserModel::getUserById($order['sender_id']);
+        $receiver = UserModel::getUserById($order['receiver_id']);
+        if (!empty($receiver)){
+            $receiver = $receiver->toArray();
+        }
+        if (!empty($sender)){
+            $sender = $sender->toArray();
+        }
+        return ApiResponse::responseSuccess(array_merge($order,[
+            'sender' => $sender,
+            'receiver' => $receiver
+        ]));
     }
 
     /**
@@ -92,13 +102,13 @@ class OrderController extends Controller{
             Logger::notice('order|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
-        if (!isset($order->receiver)){
+        if (empty($order->receiver_id)){
             Logger::notice('order|no_order_receiver|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::USER);
         }
         $order->status = OrderModel::STATUS_FINISHED;
         $order->save();
-        $receiver = $order->receiver;
+        $receiver = UserModel::find($order->receiver_id);
         $receiver->point += $req['star'];
         $receiver->save();
         return ApiResponse::responseSuccess();

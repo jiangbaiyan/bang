@@ -5,6 +5,8 @@ namespace App;
 use App\Model\OrderModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use src\Exceptions\ResourceNotFoundException;
+use src\Logger\Logger;
 
 class UserModel extends Model
 {
@@ -16,19 +18,20 @@ class UserModel extends Model
 
 
     /**
-     * 获取所有发送的订单
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * 根据id获取用户模型
+     * @param $id
+     * @return
+     * @throws ResourceNotFoundException
      */
-    public function sendOrders(){
-        return $this->hasMany(OrderModel::class,'sender_id','id');
-    }
-
-
-    /**
-     * 获取所有接到的订单
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function receiveOrders(){
-        return $this->hasMany(OrderModel::class,'receiver_id','id');
+    public static function getUserById($id){
+        if (empty($id)){
+            return [];
+        }
+        $user = UserModel::find($id);
+        if (!$user){
+            Logger::notice('userMdl|user_not_exists|userId:' . $id);
+            throw new ResourceNotFoundException();
+        }
+        return $user;
     }
 }

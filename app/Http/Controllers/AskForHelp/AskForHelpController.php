@@ -26,14 +26,15 @@ class AskForHelpController extends Controller{
      * 求支援发布订单
      * @param Request $request
      * @return string
+     * @throws OperateFailedException
      * @throws ParamValidateFailedException
      */
     public function releaseOrder(Request $request){
         $req = $request->all();
         $validator = Validator::make($req,[
-            'title' => 'required|max:255',
+            'title' => 'required',
             'content' => 'required',
-            'beginTime' => 'required|date|before:'.$req['endTime'],
+            'beginTime' => 'required|date',
             'endTime' => 'required|date',
             'type' => 'required',
             'price' => 'required',
@@ -42,6 +43,10 @@ class AskForHelpController extends Controller{
         ]);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
+        }
+        if (strtotime($req['beginTime']) >= strtotime($req['endTime'])){
+            Logger::notice('ask|illegal_time|params:' . json_encode($req));
+            throw new OperateFailedException('起止时间不合法，请重新输入');
         }
         $orderModel = new OrderModel();
         $orderModel->title = $req['title'];

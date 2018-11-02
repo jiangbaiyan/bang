@@ -2,8 +2,6 @@
 
 namespace App\Model;
 
-use App\Helper\ConstHelper;
-use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use src\Exceptions\ResourceNotFoundException;

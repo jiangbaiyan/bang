@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Helper\ConstHelper;
 use Closure;
-use App\Helper\ComConf;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
@@ -29,7 +29,7 @@ class CheckLogin
             throw new UnAuthorizedException();
         }
         try{
-            $user = JWT::decode($frontToken, ComConf::JWT_KEY ,['HS256']);
+            $user = JWT::decode($frontToken, ConstHelper::JWT_KEY ,['HS256']);
         }catch (\Exception $e){
             Logger::notice('auth|decode_token_failed|msg:' . $e->getMessage() . 'frontToken:'. $frontToken);
             throw new UnAuthorizedException();

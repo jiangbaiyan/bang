@@ -12,7 +12,6 @@ use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
 use App\UserModel;
-use App\Helper\ComConf;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
@@ -221,7 +220,7 @@ class HduLogin extends Controller {
      * @return mixed
      */
     private function setToken($data){
-        $token = JWT::encode($data,ComConf::JWT_KEY);
+        $token = JWT::encode($data,ConstHelper::JWT_KEY);
         $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$data['uid']);
         Redis::set($redisKey,$token);
         Redis::expire($redisKey,2678400);

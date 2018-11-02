@@ -12,6 +12,8 @@ class ConstHelper{
 
     const
 
+        JWT_KEY = 'bang',
+
         HOST = 'https://bang.cloudshm.com/api/v1',
 
         MALE = '男',

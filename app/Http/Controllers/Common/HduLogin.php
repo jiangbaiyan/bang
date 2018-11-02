@@ -16,6 +16,7 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use src\ApiHelper\ApiRequest;
 use src\Exceptions\OperateFailedException;
 use src\Logger\Logger;
 use src\ApiHelper\ApiResponse;
@@ -81,11 +82,9 @@ class HduLogin extends Controller {
      * @throws OperateFailedException
      */
     private function getLT(){
-        $ch = curl_init('http://cas.hdu.edu.cn/cas/login?service=' . self::THIS_URL);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-        $res = curl_exec($ch);
+        $res = ApiRequest::sendRequestNew('GET','http://cas.hdu.edu.cn/cas/login?service=' . self::THIS_URL);
         preg_match('/LT-\d+-\w+/',$res,$matches);
-        curl_close($ch);
+        ApiRequest::closeCurlHandle();
         if (empty($matches)){
             throw new OperateFailedException('login|get_LT_from_cas_failed|req:' . json_encode($res));
         }
@@ -114,12 +113,8 @@ class HduLogin extends Controller {
         $payload['username'] = trim($uid);
         $payload['password'] = md5(trim($password));
         $payload['lt'] = $this->getLT();
-        $payload = http_build_query($payload);
-        $ch = curl_init(self::LOGIN_SERVER);
-        curl_setopt($ch,CURLOPT_POST,1);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-        $res = curl_exec($ch);
+        $res = ApiRequest::sendRequestNew('POST',self::LOGIN_SERVER,$payload);
+        ApiRequest::closeCurlHandle();
         if (strpos($res,'错误的用户名或密码')){
             Logger::notice('login|wrong_password|res:' . json_encode($res));
             throw new OperateFailedException('用户名或密码错误，请重新输入');

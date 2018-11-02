@@ -9,7 +9,7 @@ use src\Logger\Logger;
 
 class OrderModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes;//软删除
 
     protected $table = 'orders';
 

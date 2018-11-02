@@ -1,7 +1,7 @@
 <?php
 
 Route::group(['prefix' => 'v1'],function (){
-
+    
      //登录注册模块
      Route::group(['prefix' => 'common'],function (){
 

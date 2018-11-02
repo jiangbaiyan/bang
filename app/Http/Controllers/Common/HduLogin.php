@@ -84,7 +84,6 @@ class HduLogin extends Controller {
     private function getLT(){
         $res = ApiRequest::sendRequestNew('GET','http://cas.hdu.edu.cn/cas/login?service=' . self::THIS_URL);
         preg_match('/LT-\d+-\w+/',$res,$matches);
-        ApiRequest::closeCurlHandle();
         if (empty($matches)){
             throw new OperateFailedException('login|get_LT_from_cas_failed|req:' . json_encode($res));
         }
@@ -114,7 +113,6 @@ class HduLogin extends Controller {
         $payload['password'] = md5(trim($password));
         $payload['lt'] = $this->getLT();
         $res = ApiRequest::sendRequestNew('POST',self::LOGIN_SERVER,$payload);
-        ApiRequest::closeCurlHandle();
         if (strpos($res,'错误的用户名或密码')){
             Logger::notice('login|wrong_password|res:' . json_encode($res));
             throw new OperateFailedException('用户名或密码错误，请重新输入');

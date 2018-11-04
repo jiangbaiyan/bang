@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Common;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
+use App\Service\WxService;
 use App\UserModel;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
@@ -196,14 +197,15 @@ class HduLogin extends Controller {
                 'uid' => 'required',
                 'password' => 'required',
                 'phone' => 'required',
-                'openid' => 'required',
+                'code' => 'required',
                 'avatar' => 'required'
             ]);
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
             $ticket = $this->getTicket($params['uid'],$params['password']);
-            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $params['openid'] . '&avatar=' . $params['avatar']);
+            $openid = WxService::getOpenid($params['code']);
+            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $openid . '&avatar=' . $params['avatar']);
         }
     }
 

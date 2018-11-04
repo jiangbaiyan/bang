@@ -8,9 +8,9 @@
 
 namespace App\Service;
 
-use phpDocumentor\Reflection\Types\Self_;
 use src\ApiHelper\ApiRequest;
 use src\Exceptions\OperateFailedException;
+use src\Logger\Logger;
 use Yansongda\Pay\Pay;
 
 class WxService{
@@ -51,9 +51,10 @@ class WxService{
         $appId = self::$appId;
         $appKey = self::$appKey;
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid=$appId&secret=$appKey&js_code=$code&grant_type=authorization_code";
-        $res = ApiRequest::sendRequest('GET',$url);
+        $res = ApiRequest::sendRequestNew('GET',$url);
         if (array_key_exists('errmsg',$res)){
-            throw new OperateFailedException($res['errmsg']);
+            Logger::notice('wx|get_openid_from_api_failed|msg:' . json_encode($res));
+            throw new OperateFailedException('获取微信授权失败');
         }
         return $res['openid'];
     }

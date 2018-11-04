@@ -52,6 +52,7 @@ class WxService{
         $appKey = self::$appKey;
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid=$appId&secret=$appKey&js_code=$code&grant_type=authorization_code";
         $res = ApiRequest::sendRequestNew('GET',$url);
+        $res = json_decode($res,true);
         if (array_key_exists('errmsg',$res)){
             Logger::notice('wx|get_openid_from_api_failed|msg:' . json_encode($res));
             throw new OperateFailedException('获取微信授权失败');

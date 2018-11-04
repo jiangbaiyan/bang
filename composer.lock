@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jiangbaiyan/helper.git",
-                "reference": "bf7cded2fce7feb288e5040b598081af5a8c098c"
+                "reference": "696cc5a768e1fc88ecfbc128aca2a5be21aacca4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jiangbaiyan/helper/zipball/bf7cded2fce7feb288e5040b598081af5a8c098c",
-                "reference": "bf7cded2fce7feb288e5040b598081af5a8c098c",
+                "url": "https://api.github.com/repos/jiangbaiyan/helper/zipball/696cc5a768e1fc88ecfbc128aca2a5be21aacca4",
+                "reference": "696cc5a768e1fc88ecfbc128aca2a5be21aacca4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -57,7 +57,7 @@
                 "request",
                 "response"
             ],
-            "time": "2018-11-02T03:14:52+00:00"
+            "time": "2018-11-02T09:04:41+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",

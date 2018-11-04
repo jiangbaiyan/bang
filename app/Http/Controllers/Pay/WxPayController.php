@@ -43,8 +43,13 @@ class WxPayController extends Controller{
             'body' => $order->title,
             'openid' => $user->openid,
         ];
+        if (empty($order->uuid) || empty($order->price) || empty($order->title) || empty($user->openid)){
+            Logger::notice('wxpay|unify_pay_params_error' . json_encode($params));
+            throw new OperateFailedException('统一下单参数不正确');
+        }
         $app = WxService::getWxPayApp();
         $res = $app->miniapp($params);
+        Logger::notice('wxpay|unify_pay_params:' . json_encode($params) . '|res:' . json_encode($res));
         return ApiResponse::responseSuccess($res);
     }
 
@@ -84,9 +89,14 @@ class WxPayController extends Controller{
             Logger::notice('wxpay|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_ORDER_STATUS);
         }
+        $receiver = UserModel::find($order->receiver_id);
+        if (empty($receiver->openid) || empty($order->uuid) || empty($order->price) || empty($order->title)){
+            Logger::notice('wxpay|transfer_params_error' . json_encode($params));
+            throw new OperateFailedException('转账参数不正确');
+        }
         $params = [
             'partner_trade_no' => $order->uuid,              //商户订单号
-            'openid' => $order->receiver->openid,        //收款人的openid
+            'openid' => $receiver->openid,        //收款人的openid
             'check_name' => 'NO_CHECK',                //NO_CHECK：不校验真实姓名\FORCE_CHECK：强校验真实姓名
             'amount' => ($order->price) * 100,         //企业付款金额，单位为分
             'desc' => $order->title,                   //付款说明
@@ -94,6 +104,7 @@ class WxPayController extends Controller{
         ];
         $app = WxService::getWxPayApp();
         $res = $app->transfer($params);
+        Logger::notice('wxpay|wxtransfer_pay_params:' . json_encode($params) . '|res:' . json_encode($res));
         return ApiResponse::responseSuccess($res);
     }
 }

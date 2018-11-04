@@ -180,7 +180,7 @@ class HduLogin extends Controller {
                 $data['school'] = '杭州电子科技大学';
                 $data['phone'] = Request::get('phone');
                 $data['openid'] = Request::get('openid');
-                $data['avatar'] = Request::get('avatar');
+                !empty(Request::get('avatar')) && $data['avatar'] = Request::get('avatar');
                 $user = $this->getLatestUser($data);
                 $token = $this->setToken($user);
 
@@ -198,14 +198,14 @@ class HduLogin extends Controller {
                 'password' => 'required',
                 'phone' => 'required',
                 'code' => 'required',
-                'avatar' => 'required'
             ]);
             if ($validator->fails()){
                 throw new ParamValidateFailedException($validator);
             }
             $ticket = $this->getTicket($params['uid'],$params['password']);
             $openid = WxService::getOpenid($params['code']);
-            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $openid . '&avatar=' . $params['avatar']);
+            $avatar = !empty($params['avatar']) ? $params['avatar'] : '';
+            return redirect(self::THIS_URL . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $openid . '&avatar=' . $avatar);
         }
     }
 

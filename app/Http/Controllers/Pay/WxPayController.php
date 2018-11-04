@@ -26,6 +26,7 @@ class WxPayController extends Controller{
      * 统一下单
      * @param Request $request
      * @return string
+     * @throws OperateFailedException
      * @throws ParamValidateFailedException
      * @throws \src\Exceptions\ResourceNotFoundException
      */
@@ -48,8 +49,14 @@ class WxPayController extends Controller{
             throw new OperateFailedException('统一下单参数不正确');
         }
         $app = WxService::getWxPayApp();
-        $res = $app->miniapp($params);
-        Logger::notice('wxpay|unify_pay_params:' . json_encode($params) . '|res:' . json_encode($res));
+        Logger::notice('wxpay|unify_pay_params:' . json_encode($params));
+        try{
+            $res = $app->miniapp($params);
+        } catch (\Exception $e){
+            Logger::fatal('wxpay|error:' . json_encode($e->getMessage()));
+            throw new OperateFailedException('调用支付接口异常');
+        }
+        Logger::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
         return ApiResponse::responseSuccess($res);
     }
 
@@ -103,8 +110,14 @@ class WxPayController extends Controller{
             'type' => 'miniapp'
         ];
         $app = WxService::getWxPayApp();
-        $res = $app->transfer($params);
-        Logger::notice('wxpay|wxtransfer_pay_params:' . json_encode($params) . '|res:' . json_encode($res));
+        Logger::notice('wxpay|wxtransfer_pay_params:' . json_encode($params));
+        try{
+            $res = $app->transfer($params);
+        } catch (\Exception $e){
+            Logger::fatal('wxpay|wxtransfer_error:' . json_encode($e->getMessage()));
+            throw new OperateFailedException('调用转账接口失败');
+        }
+        Logger::notice('wxpay|wxtransfer_pay_res:|res:' . json_encode($res));
         return ApiResponse::responseSuccess($res);
     }
 }

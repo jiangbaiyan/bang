@@ -47,11 +47,6 @@ class HduLogin extends Controller {
             throw new ParamValidateFailedException($validator);
         }
         $phone = $req['phone'];
-        $user = UserModel::where('phone',$phone)->first();
-        if ($user){
-            Logger::notice('login|user_has_exist|user:' . json_encode($user));
-            throw new OperateFailedException('抱歉，您的手机号已被注册');
-        }
         SmsService::getCode($phone);
         return ApiResponse::responseSuccess();
     }

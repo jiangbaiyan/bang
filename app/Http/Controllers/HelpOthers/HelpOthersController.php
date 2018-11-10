@@ -49,7 +49,7 @@ class HelpOthersController extends Controller{
         $page = $request->get('page') ?? 1;
         $size = $request->get('size') ?? 10;
         $req = $request->all();
-        $validator = Validator::make($req,['longitude' => 'required','latitude' => 'required']);
+        $validator = Validator::make($req,['longitude' => 'required|numeric','latitude' => 'required|numeric']);
         if ($validator->fails()){
             throw new ParamValidateFailedException($validator);
         }

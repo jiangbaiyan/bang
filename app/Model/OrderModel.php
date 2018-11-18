@@ -2,8 +2,10 @@
 
 namespace App\Model;
 
+use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
 use src\Exceptions\ResourceNotFoundException;
 use src\Logger\Logger;
 
@@ -181,8 +183,20 @@ class OrderModel extends Model
         $limit = $limitParams['size'];
         $datas = $midData->offset($offset)->limit($limit)->get()->toArray();
         $limitRes = self::calculatePage($count,$curPage,$baseUrl,$pageSize);
-        foreach ($datas as $items){
-            $items['content'] = str_limit($items['content'],100,'...');
+        foreach ($datas as &$v){
+            $v['content'] = str_limit($v['content'],100,'...');
+            if (empty($v['avatar'])){
+                if (!empty($v['sender_id'])){
+                    $sender = UserModel::find($v['sender_id']);
+                    $v['sender_avatar'] = $sender->avatar;
+                }
+                if (!empty($v['receiver_id'])){
+                    $receiver = UserModel::find($v['receiver_id']);
+                    $v['receiver_avatar'] = $receiver->avatar;
+                }
+                unset($v['receiver_id']);
+                unset($v['sender_id']);
+            }
         }
         return array_merge(['data' => $datas],$limitRes);
     }

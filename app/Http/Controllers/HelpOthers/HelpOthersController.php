@@ -57,7 +57,7 @@ class HelpOthersController extends Controller{
         $orderModel = new OrderModel();
         $now = date('Y-m-d H:i:s');
         $res = $orderModel
-            ->select('id','title','content','price','longitude','latitude','created_at')
+            ->select('id','title','content','price','longitude','latitude','created_at','sender_id')
             ->where('status',OrderModel::STATUS_RELEASED)
             ->where('begin_time','<',$now)
             ->where('end_time','>',$now)

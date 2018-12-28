@@ -32,7 +32,7 @@ class OrderController extends Controller{
         $userId = $request->get('user')->id;
         $middleRes = OrderModel::where('sender_id',$userId)
             ->withTrashed()
-            ->select('id','title','status','content','price','updated_at','receiver_id')
+            ->select('id','title','status','content','type','price','updated_at','receiver_id')
             ->latest();
         $data = OrderModel::packLimitData($middleRes,$page,$size,$request->fullUrl());
         return ApiResponse::responseSuccess($data);
@@ -50,7 +50,7 @@ class OrderController extends Controller{
         $userId = $request->get('user')->id;
         $middleRes = OrderModel::where('receiver_id',$userId)
             ->withTrashed()
-            ->select('id','title','status','content','price','updated_at','sender_id')
+            ->select('id','title','status','content','type','price','updated_at','sender_id')
             ->latest();
         $data = OrderModel::packLimitData($middleRes,$page,$size,$request->fullUrl());
         return ApiResponse::responseSuccess($data);

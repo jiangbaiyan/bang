@@ -26,10 +26,6 @@ class WxService{
             'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/wechatNotify',
             'cert_client' => __DIR__ . '/apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
             'cert_key' => __DIR__ . '/apiclient_key.pem',// optional, 退款，红包等情况时需要用到
-            'log' => [ // optional
-                'file' => './storage/logs/wechat.log',
-                'level' => 'debug'
-            ],
             'type' => 'miniapp'
     ];
 

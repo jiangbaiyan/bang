@@ -148,7 +148,7 @@ class HelpOthersController extends Controller{
         }
         $userId = $req['user']->id;
         if ($order->sender_id != $userId){
-            Logger::notice('ho|sender_id_not_eq_uid|msg:' . json_encode($order));
+            Logger::notice('ho|sender_id_not_eq_id|msg:' . json_encode($order));
             throw new OperateFailedException(ConstHelper::WRONG_FINISHER);
         }
         $sender = UserModel::getUserById($order->sender_id);

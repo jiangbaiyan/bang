@@ -59,7 +59,7 @@ class SmsService{
         //设置Cache，为验证接口使用
         $key = sprintf(self::REDIS_SMS_VERIFY,$phone);
         Redis::set($key,$code);
-        Redis::expire($key,60);
+        Redis::expire($key,90);
         return ApiResponse::responseSuccess();
     }
 

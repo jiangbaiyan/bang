@@ -34,7 +34,7 @@ class CheckLogin
             Logger::notice('auth|decode_token_failed|msg:' . $e->getMessage() . 'frontToken:'. $frontToken);
             throw new UnAuthorizedException();
         }
-        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$user->uid);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$user->phone);
         if (Redis::ttl($redisKey) <= 0) {
             Logger::notice('auth|token_expired|user:' . json_encode($user));
             throw new UnAuthorizedException();

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Common;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Service\SmsService;
+use App\Service\WxService;
 use App\UserModel;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Redis;
@@ -68,8 +69,8 @@ class HduLogin extends Controller {
         }
         $phone = $req['phone'];
         $frontCode = $req['code'];
-        SmsService::verifyCode($phone,$frontCode);
-        $openid = Wx::getOpenid($this->params['wxCode']);
+        //SmsService::verifyCode($phone,$frontCode);
+        $openid = WxService::getOpenid($req['wxCode']);
         $data = array(
             'phone' => $phone,
             'name'  => $req['nickname'],
@@ -88,7 +89,7 @@ class HduLogin extends Controller {
      */
     private function setToken($data){
         $token = JWT::encode($data,ConstHelper::JWT_KEY);
-        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$data['uid']);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX,$data['phone']);
         Redis::set($redisKey,$token);
         Redis::expire($redisKey,2678400);
         return $token;
@@ -100,12 +101,12 @@ class HduLogin extends Controller {
      * @return mixed
      */
     private function getLatestUser($data){
-        $user = UserModel::where('uid',$data['uid'])->first();
+        $user = UserModel::where('phone',$data['phone'])->first();
         if (!$user){
             UserModel::create($data);
         } else{
             $user->update($data);
-            $user = UserModel::where('uid',$data['uid'])->first();
+            $user = UserModel::where('phone',$data['phone'])->first();
         }
         return $user;
     }

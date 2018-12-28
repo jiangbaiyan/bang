@@ -68,7 +68,6 @@ class SmsService{
      * @param $phone
      * @param $frontCode
      * @throws OperateFailedException
-     * @throws ResourceNotFoundException
      */
     public static function verifyCode($phone,$frontCode){
         $key = sprintf(self::REDIS_SMS_VERIFY,$phone);

@@ -11,7 +11,6 @@ namespace App\Http\Controllers\AskForHelp;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
-use App\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;

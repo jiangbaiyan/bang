@@ -5,7 +5,6 @@ namespace App\Model;
 use App\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\App;
 use src\Exceptions\ResourceNotFoundException;
 use src\Logger\Logger;
 
@@ -60,9 +59,9 @@ class OrderModel extends Model
     {
         $orderModel = new OrderModel();
         if (!empty($select)) {
-            $order = $orderModel->select($select)->find($id);
+            $order = $orderModel->select($select)->withTrashed()->find($id);
         } else {
-            $order = $orderModel->find($id);
+            $order = $orderModel->withTrashed()->find($id);
         }
         if (!$order) {
             Logger::fatal('orderMdl|order_not_exists|orderId:' . $id);

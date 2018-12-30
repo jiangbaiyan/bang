@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use Illuminate\Support\Facades\Redis;
 use src\ApiHelper\ApiRequest;
 use src\Exceptions\OperateFailedException;
 use src\Logger\Logger;
@@ -29,6 +30,34 @@ class WxService{
             'type' => 'miniapp'
     ];
 
+    private static $model =  [
+        'touser' => '',
+        'template_id' => 'zGYFT0ZK4MV02Ql0OdUF0ZXKjaEqmmBsOOok4UJte6g',
+        'form_id' => '',
+        'data' => array(
+            'keyword1' => array(
+                'value' => ''
+            ),
+            'keyword2' => array(
+                'value' => ''
+            ),
+            'keyword3' => array(
+                'value' => ''
+            ),
+            'keyword4' => array(
+                'value' => ''
+            ),
+            'keyword5' => array(
+                'value' => ''
+            ),
+        )
+    ];
+
+    const REDIS_OPENID_KEY = 'bang_openid';
+
+    const REDIS_ACCESS_TOKEN_KEY = 'bang_access_token';
+
+
     /**
      * 获取微信支付实例
      * @return \Yansongda\Pay\Gateways\Wechat
@@ -44,6 +73,10 @@ class WxService{
      * @throws OperateFailedException
      */
     public static function getOpenid($code){
+        $openid = Redis::get(self::REDIS_OPENID_KEY);
+        if (!empty($openid)){
+            return $openid;
+        }
         $appId = self::$appId;
         $appKey = self::$appKey;
         $url = "https://api.weixin.qq.com/sns/jscode2session?appid=$appId&secret=$appKey&js_code=$code&grant_type=authorization_code";
@@ -53,6 +86,61 @@ class WxService{
             Logger::notice('wx|get_openid_from_api_failed|msg:' . json_encode($res));
             throw new OperateFailedException('获取微信授权失败');
         }
+        Redis::set(self::REDIS_OPENID_KEY, $res['openid'], 119);
         return $res['openid'];
+    }
+
+    /**
+     * 获取access_token
+     * @return mixed
+     * @throws OperateFailedException
+     */
+    public static function getAccessToken(){
+        $accessToken = Redis::get(self::REDIS_ACCESS_TOKEN_KEY);
+        if (!empty($accessToken)){
+            return $accessToken;
+        }
+        $appId = self::$appId;
+        $appKey = self::$appKey;
+        $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$appId&secret=$appKey";
+        $res = ApiRequest::sendRequestNew('GET', $url);
+        $res = json_decode($res, true);
+        if (isset($res['errmsg'])){
+            Logger::fatal('wx|get_access_token_failed|msg:' . json_encode($res));
+            throw new OperateFailedException('获取access_token失败');
+        }
+        $accessToken = $res['access_token'];
+        $expire = $res['expires_in'];
+        Redis::set(self::REDIS_ACCESS_TOKEN_KEY, $accessToken, $expire);
+        return $accessToken;
+    }
+
+    /**
+     * 发送模板消息
+     * @param $openid
+     * @param array $params
+     * @return bool
+     * @throws OperateFailedException
+     */
+    public static function sendModelInfo($openid, $params = array()){
+        $accessToken = self::getAccessToken();
+        $url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=$accessToken";
+        $config = self::$model;
+        $config['touser'] = $openid;
+        $config['form_id'] = $params['form_id'];
+        $config['data']['keyword1']['value'] = $params['uuid'];
+        $config['data']['keyword2']['value'] = $params['created_at'];
+        $config['data']['keyword3']['value'] = $params['type'];
+        $config['data']['keyword4']['value'] = $params['title'];
+        $config['data']['keyword5']['value'] = $params['price'] . '元';
+        $res = ApiRequest::sendRequestNew('POST', $url, [
+            'json' => json_encode($config)
+        ]);
+        $res = json_decode($res, true);
+        if (isset($res['errmsg'])){
+            Logger::fatal('wx|send_model_info_failed|msg:' . json_encode($res));
+            throw new OperateFailedException('模板消息发送失败');
+        }
+        return true;
     }
 }

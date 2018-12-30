@@ -167,9 +167,8 @@ class OrderModel extends Model
      * 打包数据和分页结果一起返回给客户端
      * @param $midData
      * @param $curPage
+     * @param $pageSize
      * @param $baseUrl
-     * @param $offset
-     * @param $limit
      * @return array
      */
     public static function packLimitData($midData,$curPage,$pageSize,$baseUrl){

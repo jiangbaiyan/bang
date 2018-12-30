@@ -120,4 +120,41 @@ class WxPayController extends Controller{
         Logger::notice('wxpay|wxtransfer_pay_res:|res:' . json_encode($res));
         return ApiResponse::responseSuccess($res);
     }
+
+    /**
+     * 发送模板消息
+     * @param Request $request
+     * @return string
+     * @throws OperateFailedException
+     * @throws ParamValidateFailedException
+     * @throws \src\Exceptions\ResourceNotFoundException
+     */
+    public function sendModelInfo(Request $request){
+        $validator = Validator::make($req = $request->all(), [
+            'id' => 'required',
+            'form_id' => 'required'
+        ]);
+        if ($validator->fails()){
+            throw new ParamValidateFailedException($validator);
+        }
+        $statusMapping =  array(
+            '跑腿',
+            '悬赏提问',
+            '学习辅导',
+            '技术服务',
+            '生后服务',
+            '其他'
+        );
+        $order = OrderModel::getOrderById($req['id']);
+        $openid = $request->get('user')->openid;
+        WxService::sendModelInfo($openid, [
+            'form_id'    => $req['form_id'],
+            'created_at' => $order->created_at,
+            'uuid'       => $order->uuid,
+            'type'       => $statusMapping[$order->type],
+            'title'      => $order->title,
+            'price'      => $order->price
+        ]);
+        return ApiResponse::responseSuccess();
+    }
 }

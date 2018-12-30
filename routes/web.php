@@ -75,6 +75,9 @@ Route::group(['middleware' => 'checkLogin'], function () {
         //统一下单
         Route::get('unifyPay', 'Pay\WxPayController@unifyPay');
 
+        //发送模板消息
+        Route::get('sendModelInfo', 'Pay\WxPayController@sendModelInfo');
+
         //微信支付结果通知
         Route::get('wxNotify', 'Pay\WxPayController@wxNotify');
 

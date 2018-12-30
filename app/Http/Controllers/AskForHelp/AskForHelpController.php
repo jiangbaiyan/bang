@@ -53,7 +53,7 @@ class AskForHelpController extends Controller{
         $orderModel->begin_time = $req['beginTime'];
         $orderModel->end_time = $req['endTime'];
         $orderModel->type = $req['type'];
-        $orderModel->status = OrderModel::STATUS_RELEASED;
+        $orderModel->status = OrderModel::STATUS_WAITING_PAY;
         $orderModel->price = $req['price'];
         $orderModel->sender_id = $req['user']->id;
         $orderModel->uuid = time() . mt_rand(0,100000);

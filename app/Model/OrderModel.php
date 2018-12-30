@@ -27,7 +27,8 @@ class OrderModel extends Model
         STATUS_RUNNING = 2,//正在服务
         STATUS_WAITING_COMMENT = 3,//服务完成等待评价
         STATUS_FINISHED = 4,//评价完成
-        STATUS_CANCELED = 5;//订单取消
+        STATUS_CANCELED = 5,//订单取消
+        STATUS_WAITING_PAY = 6;//等待支付
 
 
     /**

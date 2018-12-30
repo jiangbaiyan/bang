@@ -146,6 +146,8 @@ class WxPayController extends Controller{
             '其他'
         );
         $order = OrderModel::getOrderById($req['id']);
+        $order->status = OrderModel::STATUS_RELEASED;
+        $order->save();
         $openid = $request->get('user')->openid;
         WxService::sendModelInfo($openid, [
             'form_id'    => $req['form_id'],

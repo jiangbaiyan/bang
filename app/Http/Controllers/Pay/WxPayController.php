@@ -147,14 +147,15 @@ class WxPayController extends Controller{
         );
         $order = OrderModel::getOrderById($req['id']);
         $openid = $request->get('user')->openid;
-        WxService::sendModelInfo($openid, [
+        $data = [
             'form_id'    => $req['form_id'],
-            'created_at' => $order->created_at,
+            'created_at' => $order->created_at->diffForHumans(),
             'uuid'       => $order->uuid,
             'type'       => $statusMapping[$order->type],
             'title'      => $order->title,
             'price'      => $order->price
-        ]);
+        ];
+        WxService::sendModelInfo($openid, $data);
         $order->status = OrderModel::STATUS_RELEASED;
         $order->save();
         return ApiResponse::responseSuccess();

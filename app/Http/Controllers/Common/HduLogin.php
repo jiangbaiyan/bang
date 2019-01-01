@@ -69,7 +69,7 @@ class HduLogin extends Controller {
         }
         $phone = $req['phone'];
         $frontCode = $req['code'];
-        //SmsService::verifyCode($phone,$frontCode);
+        SmsService::verifyCode($phone,$frontCode);
         $openid = WxService::getOpenid($req['wxCode']);
         $data = array(
             'phone' => $phone,

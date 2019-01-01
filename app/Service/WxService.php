@@ -25,8 +25,8 @@ class WxService{
             'mch_id' => '1508225431',//商户id
             'key' => 'c1f7a5af2f140e9811a1290c185faff8',//支付的key
             'notify_url' => \App\Helper\ConstHelper::HOST . 'pay/wechatNotify',
-            'cert_client' => __DIR__ . '/apiclient_cert.pem', // optional, 退款，红包等情况时需要用到
-            'cert_key' => __DIR__ . '/apiclient_key.pem',// optional, 退款，红包等情况时需要用到
+            'cert_client' => '/home/wwwroot/bang/app/Service/apiclient_cert.pem',
+            'cert_key' => '/home/wwwroot/bang/app/Service/apiclient_key.pem',// optional, 退款，红包等情况时需要用到
             'type' => 'miniapp'
     ];
 

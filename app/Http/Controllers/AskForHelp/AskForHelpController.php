@@ -11,6 +11,7 @@ namespace App\Http\Controllers\AskForHelp;
 use App\Helper\ConstHelper;
 use App\Http\Controllers\Controller;
 use App\Model\OrderModel;
+use App\Service\WxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use src\ApiHelper\ApiResponse;
@@ -88,9 +89,17 @@ class AskForHelpController extends Controller{
             Logger::notice('ask|delete_order_failed|order:' . json_encode($order));
             throw new OperateFailedException('删除失败，请稍后重试');
         }
+        $app = WxService::getWxPayApp();
+        $app->refund([
+            'out_trade_no' => $order->uuid,
+            'total_fee' => ($order->price) * 100, // **单位：分**
+            'refund_fee' => ($order->price) * 100,
+            'out_refund_no' => time(),
+            'refund_desc' => '取消订单',
+            'type' => 'miniapp'
+        ]);
         $order->status = OrderModel::STATUS_CANCELED;
         $order->save();
-        //TODO:微信退款逻辑
         return ApiResponse::responseSuccess();
     }
 }
